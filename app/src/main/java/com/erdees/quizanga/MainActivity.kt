@@ -11,7 +11,7 @@ import com.erdees.quizanga.fragments.WelcomeFragment
 
 class MainActivity : AppCompatActivity() {
 
-    private val quizangaApplication by lazy {
+     private val quizangaApplication by lazy {
         (application as MainApplication).quizangaApplication
     }
 
@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
-
 
 
     private fun openFragment(fragment: Fragment, fragmentTag: String) {

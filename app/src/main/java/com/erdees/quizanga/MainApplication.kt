@@ -6,6 +6,7 @@ class MainApplication : Application() {
     val quizangaApplication by lazy {
         QuizangaApplication()
     }
+
     override fun onCreate() {
         super.onCreate()
         quizangaApplication.open()

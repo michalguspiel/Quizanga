@@ -13,7 +13,7 @@ class WelcomeFragment: Fragment() {
     lateinit var application : QuizangaApplication
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.view_welcome,container,false)
+        val view = inflater.inflate(R.layout.welcome_fragment,container,false)
 
         val startNewGameButton = view.findViewById<Button>(R.id.view_welcome_start_new_game_button)
 

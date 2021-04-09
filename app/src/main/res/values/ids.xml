@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="PLAYER_NUMBER_PICKER_ID">1552123</string>
+    <string name="PLAYER_DIALOG_BUTTON_ID">144421</string>
+    <string name="TURN_NUMBER_PICKER_ID">145211</string>
+    <string name="TURN_DIALOG_BUTTON_ID">523112</string>
+
+</resources>

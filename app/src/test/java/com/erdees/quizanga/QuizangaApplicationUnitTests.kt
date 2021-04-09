@@ -54,7 +54,15 @@ class QuizangaApplicationUnitTests {
         }
     }
 
+    @Test
+    fun `When calling function changing amount of players  game playersAmount variable actually changes`() {
+        quizangaApplication.open()
+        quizangaApplication.setAmountOfPlayers(5)
+        assertEquals(5,quizangaApplication.game.playersAmount)
+    }
 
+    @Test
+    fun `When`(){}
 
 
 }

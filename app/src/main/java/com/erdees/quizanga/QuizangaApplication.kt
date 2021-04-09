@@ -1,35 +1,36 @@
 package com.erdees.quizanga
 
 
-
 class QuizangaApplication {
 
     private object NoActionScreenCallback : (Screen) -> Unit {
         override fun invoke(screen: Screen) {}
     }
 
-    private var screenCallback : (Screen) -> Unit = NoActionScreenCallback
+    private var screenCallback: (Screen) -> Unit = NoActionScreenCallback
+    lateinit var game: Game
+    lateinit var screen: Screen
 
-    lateinit var game :  Game
-    lateinit var screen : Screen
-
-
-    fun startGame(){
+    fun startGame() {
         screen = SetGameScreen()
         this.screenCallback(screen)
     }
 
-    fun open() {
-    game = Game()
+    fun setAmountOfPlayers(number: Int) {
+        game.playersAmount = number
     }
 
-    fun setInitialScreen(){
-        screen = if(!game.hasStarted) WelcomeScreen()
+    fun open() {
+        game = Game()
+    }
+
+    fun setInitialScreen() {
+        screen = if (!game.hasStarted) WelcomeScreen()
         else GameScreen()
     }
 
 
-    fun withScreenCallback(callback: (Screen) -> Unit ){
+    fun withScreenCallback(callback: (Screen) -> Unit) {
         this.screenCallback = callback
         updateScreen(screen)
     }
