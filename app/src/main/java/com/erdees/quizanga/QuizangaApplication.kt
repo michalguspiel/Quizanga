@@ -1,5 +1,11 @@
 package com.erdees.quizanga
 
+import com.erdees.quizanga.models.Player
+import com.erdees.quizanga.screens.GameScreen
+import com.erdees.quizanga.screens.Screen
+import com.erdees.quizanga.screens.SetGameScreen
+import com.erdees.quizanga.screens.WelcomeScreen
+
 
 class QuizangaApplication {
 
@@ -10,23 +16,37 @@ class QuizangaApplication {
     private var screenCallback: (Screen) -> Unit = NoActionScreenCallback
     lateinit var game: Game
     lateinit var screen: Screen
+    val playerList : MutableList<Player> = mutableListOf()
 
-    fun startGame() {
-        screen = SetGameScreen()
+    fun setUpGame() {
+        screen = SetGameScreen(listOf())
         this.screenCallback(screen)
     }
 
-    fun setAmountOfPlayers(number: Int) {
-        game.playersAmount = number
+
+    fun startGame(){
+        if(game.numberOfTurns==0) return
+        game.numberOfTurnsLeft = game.numberOfTurns
+        game.hasStarted = true
+        setInitialScreen()
     }
 
     fun open() {
         game = Game()
     }
 
+    fun addPlayer(player : Player){
+        playerList.add(player)
+    }
+
+    fun savePlayers(playerList : MutableList<Player>) {
+        game.players = playerList
+        screen = SetGameScreen(playerList as List<Player>)
+    }
+
     fun setInitialScreen() {
         screen = if (!game.hasStarted) WelcomeScreen()
-        else GameScreen()
+        else GameScreen(game)
     }
 
 

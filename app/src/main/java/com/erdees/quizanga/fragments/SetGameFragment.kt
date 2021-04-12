@@ -9,9 +9,12 @@ import android.widget.ListView
 import android.widget.NumberPicker
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.QuizangaApplication
 import com.erdees.quizanga.R
 import com.erdees.quizanga.adapters.SetGamePlayerListAdapter
+import com.erdees.quizanga.viewModels.SetGameFragmentViewModel
 
 class SetGameFragment : Fragment() {
 
@@ -24,8 +27,11 @@ class SetGameFragment : Fragment() {
     lateinit var playersNumberPicker: NumberPicker
     lateinit var listView : ListView
 
+    lateinit var viewModel : SetGameFragmentViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.set_game_fragment, container, false)
+        viewModel = ViewModelProvider(this).get(SetGameFragmentViewModel::class.java)
 
 
 
@@ -41,7 +47,18 @@ class SetGameFragment : Fragment() {
             pickNumberOfTurns()
         }
         setUpBasicSettings()
-        val listAdapter = SetGamePlayerListAdapter(requireActivity(), listOf())
+        val listAdapter = SetGamePlayerListAdapter(requireContext(), listOf())
+
+        /**Listening to LiveData*/
+        viewModel.getAmountOfGameTurns().observe(viewLifecycleOwner,  { amount ->
+            application.game.setAmountOfGameTurns(amount)
+            roundCountTextView.text = application.game.numberOfTurns.toString()
+        })
+        viewModel.getAmountOfPlayers().observe(viewLifecycleOwner,{amount ->
+            application.game.setAmountOfPlayers(amount)
+            playersCountTextView.text = application.game.playersAmount.toString()
+        })
+
 
         return view
     }
@@ -68,8 +85,7 @@ class SetGameFragment : Fragment() {
     }
 
     private fun setAmountOfPlayers(number: Int) {
-        application.setAmountOfPlayers(number)
-        playersCountTextView.text = application.game.playersAmount.toString()
+        viewModel.setAmountOfPlayers(number)
     }
 
     private fun pickNumberOfTurns() {
@@ -91,16 +107,15 @@ class SetGameFragment : Fragment() {
             setNumberOfTurns(turnsNumberPicker.value)
         roundsDialog.dismiss()
         }
-
     }
 
     private fun setNumberOfTurns(number: Int) {
-        roundCountTextView.text = number.toString()
+        viewModel.setAmountOfGameTurns(number)
     }
 
     private fun setUpBasicSettings(){
-        application.game.playersAmount = playersCountTextView.text.toString().toInt()
-
+        viewModel.setAmountOfPlayers(playersCountTextView.text.toString().toInt())
+       // application.game.playersAmount = playersCountTextView.text.toString().toInt()
     }
 
     companion object {

@@ -18,7 +18,7 @@ class WelcomeFragment: Fragment() {
         val startNewGameButton = view.findViewById<Button>(R.id.view_welcome_start_new_game_button)
 
         startNewGameButton.setOnClickListener {
-            application.startGame()
+            application.setUpGame()
         }
 
         return view

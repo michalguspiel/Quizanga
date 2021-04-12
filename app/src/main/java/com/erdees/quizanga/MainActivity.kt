@@ -8,6 +8,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.erdees.quizanga.fragments.SetGameFragment
 import com.erdees.quizanga.fragments.WelcomeFragment
+import com.erdees.quizanga.screens.SetGameScreen
+import com.erdees.quizanga.screens.WelcomeScreen
 
 class MainActivity : AppCompatActivity() {
 

@@ -122,7 +122,6 @@ fun closeEverything(){
         val numberPickerInput = withParent(withId(numberPickerID))
         val alertDialogSubmitButtonID = resources.getString(R.string.TURN_DIALOG_BUTTON_ID).toInt()
         val alertDialogSubmitButton = withId(alertDialogSubmitButtonID)
-
         onView(startGameButton).perform(click())
         onView(numberOfTurnsTV).perform(click())
         onView(withText("Pick number of turns")).check(matches(isDisplayed()))
@@ -134,11 +133,18 @@ fun closeEverything(){
     }
 
     @Test
+    fun accessGameFromFragment(){
+        onView(startGameButton).perform(click())
+        assertEquals(quizangaApplication.game.playersAmount,2)
+    }
+
+
+    @Test
     fun setupPlayersAmountInitially2() {
         onView(startGameButton).perform(click())
         onView(withText("2")).check(matches(isDisplayed()))
         quizangaApplication.open()
-        quizangaApplication.setAmountOfPlayers(2)
+        quizangaApplication.game.setAmountOfPlayers(2)
         assertEquals(2, quizangaApplication.game.playersAmount)
     }
 
