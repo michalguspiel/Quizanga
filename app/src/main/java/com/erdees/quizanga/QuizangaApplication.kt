@@ -28,7 +28,7 @@ class QuizangaApplication {
         if(game.numberOfTurns==0) return
         game.numberOfTurnsLeft = game.numberOfTurns
         game.hasStarted = true
-        setInitialScreen()
+        setScreen()
     }
 
     fun open() {
@@ -44,7 +44,7 @@ class QuizangaApplication {
         screen = SetGameScreen(playerList as List<Player>)
     }
 
-    fun setInitialScreen() {
+    fun setScreen() {
         screen = if (!game.hasStarted) WelcomeScreen()
         else GameScreen(game)
     }
@@ -55,7 +55,7 @@ class QuizangaApplication {
         updateScreen(screen)
     }
 
-    private fun updateScreen(screen: Screen) {
+    fun updateScreen(screen: Screen) {
         this.screen = screen
         screenCallback(this.screen)
 

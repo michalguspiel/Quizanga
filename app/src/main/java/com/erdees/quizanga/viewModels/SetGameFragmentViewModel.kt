@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import com.erdees.quizanga.database.BasicDatabase
+import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.repository.BasicRepository
 
 class SetGameFragmentViewModel() : ViewModel() {
@@ -27,4 +28,9 @@ class SetGameFragmentViewModel() : ViewModel() {
     fun getAmountOfGameTurns()  = basicRepository.getAmountOfGameTurns()
 
 
+    fun setLevelOfDifficulty(level: LevelOfDifficult){
+        basicRepository.setLevelOfDifficulty(level)
+    }
+
+    fun getDifficultLevel() = basicRepository.getDifficultLevel()
 }

@@ -2,6 +2,8 @@ package com.erdees.quizanga
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.platform.app.InstrumentationRegistry
+import com.erdees.quizanga.levelOfDifficult.Hard
+import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.repository.BasicRepository
 import com.erdees.quizanga.viewModels.SetGameFragmentViewModel
 import junit.framework.TestCase
@@ -39,6 +41,12 @@ class ViewModelUnitTests {
     fun setAmountOfTurns_ShouldSetAmountOfTurns(){
         viewModel.setAmountOfGameTurns(99)
         assertEquals(viewModel.getAmountOfGameTurns().value,99)
+    }
+
+    @Test
+    fun setLevelOfDifficulty_ShouldSetLevelOfDifficulty(){
+        viewModel.setLevelOfDifficulty(Hard)
+        assertEquals(Hard,viewModel.getDifficultLevel().value)
     }
 
 }

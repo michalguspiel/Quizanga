@@ -43,7 +43,7 @@ class QuizangaApplicationUnitTests {
     @Test
     fun `Given I open app and the game isnt started i see welcome screen`(){
         quizangaApplication.open()
-        quizangaApplication.setInitialScreen()
+        quizangaApplication.setScreen()
         quizangaApplication.withScreenCallback { screen ->
             assertEquals(true,screen is WelcomeScreen)
         }
@@ -52,7 +52,7 @@ class QuizangaApplicationUnitTests {
     fun `Given I reopen app when Game was on I see GameScreen`(){
         quizangaApplication.open()
         quizangaApplication.game.hasStarted = true
-        quizangaApplication.setInitialScreen()
+        quizangaApplication.setScreen()
         quizangaApplication.withScreenCallback { screen ->
             assertEquals(true, screen is GameScreen)
         }
@@ -141,7 +141,7 @@ class QuizangaApplicationUnitTests {
     @Test
     fun `Given the player answered wrong and level of difficult is hard so his points are -100 `(){
         setUpTestGame()
-        quizangaApplication.game.difficultLevel = Hard()
+        quizangaApplication.game.difficultLevel = Hard
         quizangaApplication.startGame()
         quizangaApplication.game.wrongAnswer(michal)
         val michalIndex = quizangaApplication.game.players.indexOf(michal)

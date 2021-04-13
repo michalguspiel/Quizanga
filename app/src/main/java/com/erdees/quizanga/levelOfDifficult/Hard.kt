@@ -1,6 +1,7 @@
 package com.erdees.quizanga.levelOfDifficult
 
-class Hard(override var name: String = "Hard") : LevelOfDifficult {
+object Hard: LevelOfDifficult {
+    override var name: String = "Hard"
     override fun pointsAddedForCorrectAnswer(): Int = 100
     override fun pointsRemovedPerWrongAnswer(): Int = 50
 }

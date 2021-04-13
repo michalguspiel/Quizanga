@@ -9,11 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.QuizangaApplication
 import com.erdees.quizanga.R
-import com.erdees.quizanga.adapters.SetGamePlayerListAdapter
 import com.erdees.quizanga.levelOfDifficult.Easy
 import com.erdees.quizanga.levelOfDifficult.Hard
 import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
@@ -29,7 +27,6 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private lateinit var roundsDialog: AlertDialog
     lateinit var turnsNumberPicker: NumberPicker
     lateinit var playersNumberPicker: NumberPicker
-    lateinit var listView : ListView
     lateinit var playerListLayout : LinearLayout
     lateinit var viewModel : SetGameFragmentViewModel
     lateinit var startGameButton: Button
@@ -38,7 +35,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private lateinit var levelsList : List<LevelOfDifficult>
     private lateinit var levelsSpinner : AutoCompleteTextView
     override fun onResume() {
-        levelsList = listOf(Easy(), Hard())
+        levelsList = listOf(Easy, Hard)
         val levelsAdapter = ArrayAdapter(requireActivity(), R.layout.support_simple_spinner_dropdown_item, levelsList.map{it.name})
         with(levelsSpinner) {
             setSelection(0)
@@ -70,6 +67,8 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         }
         startGameButton.setOnClickListener {
             saveListOfPlayersFromLayoutToList()
+            startNewGame()
+
         }
 
         setUpBasicSettings()
@@ -84,11 +83,19 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
             playersCountTextView.text = application.game.playersAmount.toString()
             saveListOfPlayersFromLayoutToList()
             setListOfPlayersAccordingly(amount)
-
+        })
+        viewModel.getDifficultLevel().observe(viewLifecycleOwner,{
+          if(it != null)  application.game.difficultLevel = it
         })
 
 
         return view
+    }
+
+    private fun startNewGame(){
+        application.game.players = playerList
+        application.startGame()
+    application.updateScreen(application.screen)
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){
@@ -108,6 +115,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
             }
             else playerList.add(Player("",0))
         }
+        application.game.players = this.playerList
     }
 
     private fun setListOfPlayersAccordingly(number: Int){
@@ -181,6 +189,6 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     }
 
     override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-    Log.i("TEST","Clicked somewhere")
+        viewModel.setLevelOfDifficulty(levelsList[position])
     }
 }

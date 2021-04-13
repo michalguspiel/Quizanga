@@ -10,7 +10,7 @@ class MainApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         quizangaApplication.open()
-        quizangaApplication.setInitialScreen()
+        quizangaApplication.setScreen()
     }
 
 }

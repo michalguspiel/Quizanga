@@ -8,7 +8,7 @@ class Game{
     var hasEnded = false
     var hasStarted  = false
     var playersAmount = 0
-    var difficultLevel: LevelOfDifficult = Easy()
+    var difficultLevel: LevelOfDifficult = Easy
     var players : List<Player> = listOf()
     var numberOfTurns = 0
     var numberOfTurnsLeft = numberOfTurns

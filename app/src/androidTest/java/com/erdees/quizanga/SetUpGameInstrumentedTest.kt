@@ -18,6 +18,8 @@ import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.erdees.quizanga.fragments.SetGameFragment
+import com.erdees.quizanga.levelOfDifficult.Hard
+import com.erdees.quizanga.models.Player
 import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Assert.*
@@ -34,6 +36,8 @@ class SetUpGameInstrumentedTest {
     private lateinit var startGameButton : Matcher<View>
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val resources = context.resources
+
+    val playerList = listOf(Player("Michal",0), Player("Moona",0))
 
     @Before
 fun setup(){
@@ -148,12 +152,7 @@ fun closeEverything(){
         assertEquals(2, quizangaApplication.game.playersAmount)
     }
 
-    @Test
-    fun whileOpeningSetGameFragment_ListAdapterListShouldBeOfSize2(){
-        onView(startGameButton).perform(click())
-        onView(withText("2")).check(matches(isDisplayed()))
 
-    }
 
 
 }

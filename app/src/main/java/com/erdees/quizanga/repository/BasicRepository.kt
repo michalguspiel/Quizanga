@@ -1,6 +1,7 @@
 package com.erdees.quizanga.repository
 
 import com.erdees.quizanga.dao.BasicDao
+import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
 
 class BasicRepository(val dao: BasicDao) {
 
@@ -9,5 +10,8 @@ class BasicRepository(val dao: BasicDao) {
 
     fun setAmountOfGameTurns(number: Int) = dao.setAmountOfGameTurns(number)
     fun getAmountOfGameTurns() = dao.getAmountOfGameTurns()
+
+    fun setLevelOfDifficulty(level: LevelOfDifficult) = dao.setLevelOfDifficulty(level)
+    fun getDifficultLevel() = dao.getDifficultLevel()
 
 }

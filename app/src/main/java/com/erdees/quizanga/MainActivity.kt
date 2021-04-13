@@ -6,8 +6,10 @@ import android.widget.FrameLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.erdees.quizanga.fragments.GameFragment
 import com.erdees.quizanga.fragments.SetGameFragment
 import com.erdees.quizanga.fragments.WelcomeFragment
+import com.erdees.quizanga.screens.GameScreen
 import com.erdees.quizanga.screens.SetGameScreen
 import com.erdees.quizanga.screens.WelcomeScreen
 
@@ -16,7 +18,6 @@ class MainActivity : AppCompatActivity() {
      private val quizangaApplication by lazy {
         (application as MainApplication).quizangaApplication
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,10 +38,14 @@ class MainActivity : AppCompatActivity() {
                     fragment.application = quizangaApplication
                     openFragment(fragment,SetGameFragment.TAG)
                 }
+                is GameScreen -> {
+                    val fragment = GameFragment.newInstance()
+                    fragment.application = quizangaApplication
+                    openFragment(fragment,GameFragment.TAG)
+                }
             }
         }
     }
-
 
     private fun openFragment(fragment: Fragment, fragmentTag: String) {
         val backStateName = fragment.javaClass.name
