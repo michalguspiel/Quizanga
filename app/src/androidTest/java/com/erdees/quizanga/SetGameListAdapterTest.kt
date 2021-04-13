@@ -1,5 +1,6 @@
 package com.erdees.quizanga
 
+import android.app.Activity
 import android.view.ViewGroup
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.FragmentScenario
@@ -32,32 +33,23 @@ class SetGameListAdapterTest {
 
     @Before
     fun setup(){
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val michal = Player("Michal", 0)
-        val bill = Player("Bill", 0)
-        adapter = SetGamePlayerListAdapter(context, listOf(michal, bill))
+        scenario = ActivityScenario.launch(MainActivity::class.java)
     }
     @After
     fun close(){
         scenario.close()
     }
 
-    @Test
-    @Throws(Exception::class)
-    fun shouldNotBeNull() {
-        assertNotNull(adapter)
-    }
 
     @Test
     fun adapterSize_ShouldBe2(){
+        val michal = Player("Michal", 0)
+        val bill = Player("Bill", 0)
+        scenario.onActivity { activity ->
+            adapter = SetGamePlayerListAdapter(activity, listOf(michal,bill))
+        }
         assertEquals(adapter.count, 2)
     }
-
-    @Test
-    fun getView_ShouldReturnCorrectElement(){
-    assertEquals(adapter.getView(0),adapter.list[0])
-    }
-
 
 
 }
