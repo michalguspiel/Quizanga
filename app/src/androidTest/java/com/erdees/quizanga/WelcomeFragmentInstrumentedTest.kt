@@ -38,7 +38,7 @@ class WelcomeFragmentInstrumentedTest {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         Assert.assertEquals("com.erdees.quizanga", appContext.packageName)
-        Assert.assertEquals(resources.getString(R.string.PLAYER_NUMBER_PICKER_ID).toInt(), 15)
+        Assert.assertEquals(resources.getString(R.string.PLAYER_NUMBER_PICKER_ID).toInt(), 1552123)
     }
 
     @Test

@@ -1,6 +1,7 @@
 package com.erdees.quizanga.fragments
 
 import android.app.AlertDialog
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -35,7 +36,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private lateinit var levelsList : List<LevelOfDifficult>
     private lateinit var levelsSpinner : AutoCompleteTextView
     override fun onResume() {
-        levelsList = listOf(Easy, Hard)
+
         val levelsAdapter = ArrayAdapter(requireActivity(), R.layout.support_simple_spinner_dropdown_item, levelsList.map{it.name})
         with(levelsSpinner) {
             setSelection(0)
@@ -50,7 +51,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.set_game_fragment, container, false)
         viewModel = ViewModelProvider(this).get(SetGameFragmentViewModel::class.java)
-
+        levelsList = listOf(Easy, Hard)
 
         /**Binders*/
         playersCountTextView = view.findViewById(R.id.view_set_game_player_count)
@@ -66,9 +67,12 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
             pickNumberOfTurns()
         }
         startGameButton.setOnClickListener {
+            if(oneOfNameIsEmpty()) {
+                showToast(message = "Please provide players names.")
+                return@setOnClickListener
+            }
             saveListOfPlayersFromLayoutToList()
             startNewGame()
-
         }
 
         setUpBasicSettings()
@@ -92,10 +96,29 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         return view
     }
 
+    private fun showToast(
+        context: Context = requireContext(),
+        message: String,
+        toastLength: Int = Toast.LENGTH_SHORT
+    ) {
+        Toast.makeText(context,message,toastLength).show()
+    }
+
+    private fun oneOfNameIsEmpty():Boolean{
+        val playerAmount = application.game.playersAmount
+        Log.i("Test" , playerAmount.toString())
+        for (i in 0 until playerAmount){
+            val rowView = playerListLayout.getChildAt(i)
+            val editText = rowView.findViewById<EditText>(R.id.item_set_game_name_edittext)
+            if(editText.text.isNullOrBlank()) return true
+        }
+        return false
+    }
+
     private fun startNewGame(){
         application.game.players = playerList
         application.startGame()
-    application.updateScreen(application.screen)
+        application.updateScreen(application.screen)
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){
@@ -110,10 +133,10 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
             val rowView = playerListLayout.getChildAt(i)
             val editText = rowView.findViewById<EditText>(R.id.item_set_game_name_edittext)
             if(!editText.text.isNullOrBlank()) {
-                val newPlayer = Player(editText.text.toString(),0)
+                val newPlayer = Player(0,editText.text.toString(),0)
                 playerList.add(newPlayer)
             }
-            else playerList.add(Player("",0))
+            else playerList.add(Player(0,"",0))
         }
         application.game.players = this.playerList
     }
@@ -180,7 +203,10 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     }
 
     private fun setUpBasicSettings(){
-        viewModel.setAmountOfPlayers(playersCountTextView.text.toString().toInt())
+        levelsSpinner.setText(levelsList.first().name)
+        viewModel.setLevelOfDifficulty(levelsList.first())
+        viewModel.setAmountOfPlayers(2)
+        viewModel.setAmountOfGameTurns(3)
     }
 
     companion object {

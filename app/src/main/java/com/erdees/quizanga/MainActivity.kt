@@ -19,6 +19,11 @@ class MainActivity : AppCompatActivity() {
         (application as MainApplication).quizangaApplication
     }
 
+    override fun onBackPressed() {
+        if(this.supportFragmentManager.backStackEntryCount == 1) this.finish()
+        else super.onBackPressed()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

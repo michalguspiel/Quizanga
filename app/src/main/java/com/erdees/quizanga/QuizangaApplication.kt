@@ -1,13 +1,17 @@
 package com.erdees.quizanga
 
+import android.content.Context
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelStoreOwner
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.screens.GameScreen
 import com.erdees.quizanga.screens.Screen
 import com.erdees.quizanga.screens.SetGameScreen
 import com.erdees.quizanga.screens.WelcomeScreen
+import com.erdees.quizanga.viewModels.QuizangaApplicationViewModel
 
 
-class QuizangaApplication {
+class QuizangaApplication(val viewModelStoreOwner: ViewModelStoreOwner) {
 
     private object NoActionScreenCallback : (Screen) -> Unit {
         override fun invoke(screen: Screen) {}
@@ -16,6 +20,7 @@ class QuizangaApplication {
     private var screenCallback: (Screen) -> Unit = NoActionScreenCallback
     lateinit var game: Game
     lateinit var screen: Screen
+    lateinit var viewModel : QuizangaApplicationViewModel
     val playerList : MutableList<Player> = mutableListOf()
 
     fun setUpGame() {
@@ -28,6 +33,9 @@ class QuizangaApplication {
         if(game.numberOfTurns==0) return
         game.numberOfTurnsLeft = game.numberOfTurns
         game.hasStarted = true
+        viewModel = ViewModelProvider(this.viewModelStoreOwner).get(QuizangaApplicationViewModel::class.java)
+        //TODO CREATE GAME STATE IN ROOM DATABASE
+
         setScreen()
     }
 

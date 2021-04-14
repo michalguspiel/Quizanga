@@ -37,7 +37,7 @@ class SetUpGameInstrumentedTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val resources = context.resources
 
-    val playerList = listOf(Player("Michal",0), Player("Moona",0))
+    val playerList = listOf(Player(0,"Michal",0), Player(0,"Moona",0))
 
     @Before
 fun setup(){
@@ -137,19 +137,18 @@ fun closeEverything(){
     }
 
     @Test
-    fun accessGameFromFragment(){
-        onView(startGameButton).perform(click())
-        assertEquals(quizangaApplication.game.playersAmount,2)
-    }
-
-
-    @Test
     fun setupPlayersAmountInitially2() {
         onView(startGameButton).perform(click())
         onView(withText("2")).check(matches(isDisplayed()))
         quizangaApplication.open()
         quizangaApplication.game.setAmountOfPlayers(2)
         assertEquals(2, quizangaApplication.game.playersAmount)
+    }
+
+    @Test
+    fun startGameFromSetUp() {
+        onView(startGameButton).perform(click())
+        onView(withId(R.id.view_set_game_start_button)).perform(click())
     }
 
 

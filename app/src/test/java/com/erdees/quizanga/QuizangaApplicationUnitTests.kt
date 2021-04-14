@@ -71,10 +71,10 @@ class QuizangaApplicationUnitTests {
         quizangaApplication.game.setAmountOfPlayers(4)
         quizangaApplication.setUpGame()
         quizangaApplication.addPlayer(
-            Player("Michael",0))
-        quizangaApplication.addPlayer(Player("Lori",0))
-        quizangaApplication.addPlayer(Player("Mark",0))
-        quizangaApplication.addPlayer(Player("Kevin",0))
+            Player(0,"Michael",0))
+        quizangaApplication.addPlayer(Player(0,"Lori",0))
+        quizangaApplication.addPlayer(Player(0,"Mark",0))
+        quizangaApplication.addPlayer(Player(0,"Kevin",0))
         quizangaApplication.savePlayers(quizangaApplication.playerList)
             quizangaApplication.withScreenCallback { screen ->
                 assertEquals(true, screen is SetGameScreen)
@@ -82,9 +82,9 @@ class QuizangaApplicationUnitTests {
             }
         }
 
-    private val michal = Player("Michal",0)
-    private val moona = Player("Moona",0)
-    private val random = Player("RandomPerson",0)
+    private val michal = Player(0,"Michal",0)
+    private val moona = Player(0,"Moona",0)
+    private val random = Player(0,"RandomPerson",0)
 
     private fun setUpTestGame(){
         quizangaApplication.open()
