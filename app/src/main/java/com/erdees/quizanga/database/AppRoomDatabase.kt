@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.erdees.quizanga.Game
 import com.erdees.quizanga.dao.GameStateDao
+import com.erdees.quizanga.dao.PlayerDao
 import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
@@ -20,7 +21,7 @@ abstract class AppRoomDatabase: RoomDatabase() {
 
 
  abstract fun gameStateDao() : GameStateDao
-
+ abstract fun playerDao() : PlayerDao
  companion object{
   @Volatile
   private var INSTANCE: AppRoomDatabase? = null

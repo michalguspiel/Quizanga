@@ -9,11 +9,11 @@ import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
 class GameState(
     @PrimaryKey(autoGenerate = true)val gameId : Long,
    // @Embedded val playerList: List<Player> = listOf(),
-    val numberOfTurnsLeft: Int,
+    var numberOfTurnsLeft: Int,
     @TypeConverters(Converter::class)
     @ColumnInfo(name = "difficultyLevel")
     var difficultyLevel: LevelOfDifficult,
-    val roundCounter : Int
+    var roundCounter : Int
 ) {
 
 }

@@ -37,7 +37,7 @@ class SetUpGameInstrumentedTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private val resources = context.resources
 
-    val playerList = listOf(Player(0,"Michal",0), Player(0,"Moona",0))
+    val playerList = listOf(Player(0,name = "Michal",points = 0), Player(0,name = "Moona",points = 0))
 
     @Before
 fun setup(){

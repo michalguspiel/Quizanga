@@ -1,5 +1,6 @@
 package com.erdees.quizanga
 
+import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.test.platform.app.InstrumentationRegistry
 import com.erdees.quizanga.levelOfDifficult.Hard
@@ -26,9 +27,8 @@ class ViewModelUnitTests {
 
     @Before
     fun setUpFragment(){
-       viewModel  = SetGameFragmentViewModel()
         quizangaApplication = QuizangaApplication()
-
+        viewModel  = SetGameFragmentViewModel()
     }
 
     @Test

@@ -1,13 +1,20 @@
 package com.erdees.quizanga.viewModels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.erdees.quizanga.database.AppRoomDatabase
 import com.erdees.quizanga.database.BasicDatabase
 import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.repository.BasicRepository
+import com.erdees.quizanga.repository.GameStateRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
-class SetGameFragmentViewModel() : ViewModel() {
+class SetGameFragmentViewModel : ViewModel() {
 
     val basicRepository : BasicRepository
 
@@ -15,6 +22,9 @@ class SetGameFragmentViewModel() : ViewModel() {
         val basicDao = BasicDatabase.getInstance().basicDao
         basicRepository = BasicRepository(basicDao)
     }
+
+
+    fun getLastAddedGameId() = basicRepository.getLastAddedGameId()
 
     fun setAmountOfPlayers(number: Int) {
         basicRepository.setAmountOfPlayers(number)

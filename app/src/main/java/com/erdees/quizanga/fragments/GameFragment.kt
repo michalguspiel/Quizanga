@@ -21,8 +21,6 @@ class GameFragment: Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.game_fragment,container,false)
 
-        val test = view.findViewById<TextView>(R.id.textView)
-        test.text = application.game.players.map { it.name }.joinToString { it } + application.game.numberOfTurns.toString() + application.game.difficultLevel.name
 
         return view
     }

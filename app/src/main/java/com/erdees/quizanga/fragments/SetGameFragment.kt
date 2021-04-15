@@ -11,12 +11,15 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import com.erdees.quizanga.Game
 import com.erdees.quizanga.QuizangaApplication
 import com.erdees.quizanga.R
 import com.erdees.quizanga.levelOfDifficult.Easy
 import com.erdees.quizanga.levelOfDifficult.Hard
 import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
+import com.erdees.quizanga.viewModels.SetGameFragmentAndroidViewModel
 import com.erdees.quizanga.viewModels.SetGameFragmentViewModel
 
 class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
@@ -30,6 +33,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     lateinit var playersNumberPicker: NumberPicker
     lateinit var playerListLayout : LinearLayout
     lateinit var viewModel : SetGameFragmentViewModel
+    lateinit var androidViewModel : SetGameFragmentAndroidViewModel
     lateinit var startGameButton: Button
     private val playerList = mutableListOf<Player>()
 
@@ -51,6 +55,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.set_game_fragment, container, false)
         viewModel = ViewModelProvider(this).get(SetGameFragmentViewModel::class.java)
+        androidViewModel = ViewModelProvider(this).get(SetGameFragmentAndroidViewModel::class.java)
         levelsList = listOf(Easy, Hard)
 
         /**Binders*/
@@ -96,6 +101,22 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         return view
     }
 
+    private fun createNewGameStateInDatabase(game: Game){
+        val newGameState = GameState(0,game.numberOfTurns,game.difficultLevel,game.currentTurnCounter)
+        androidViewModel.startGame(newGameState)
+        val gameId = viewModel.getLastAddedGameId().value
+        createPlayersInDatabase(playerList,gameId!!)
+    }
+
+    private fun preparePlayerListToSave(gameId: Long){
+        playerList.forEach { it.gameId = gameId }
+    }
+
+    private fun createPlayersInDatabase(playerList: List<Player>,gameId: Long){
+        preparePlayerListToSave(gameId)
+        androidViewModel.savePlayersIntoGame(playerList)
+    }
+
     private fun showToast(
         context: Context = requireContext(),
         message: String,
@@ -106,7 +127,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
 
     private fun oneOfNameIsEmpty():Boolean{
         val playerAmount = application.game.playersAmount
-        Log.i("Test" , playerAmount.toString())
+        Log.i("Player amount:" , playerAmount.toString())
         for (i in 0 until playerAmount){
             val rowView = playerListLayout.getChildAt(i)
             val editText = rowView.findViewById<EditText>(R.id.item_set_game_name_edittext)
@@ -119,6 +140,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         application.game.players = playerList
         application.startGame()
         application.updateScreen(application.screen)
+        createNewGameStateInDatabase(application.game)
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){
@@ -133,10 +155,10 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
             val rowView = playerListLayout.getChildAt(i)
             val editText = rowView.findViewById<EditText>(R.id.item_set_game_name_edittext)
             if(!editText.text.isNullOrBlank()) {
-                val newPlayer = Player(0,editText.text.toString(),0)
+                val newPlayer = Player(0,name = editText.text.toString(),points = 0)
                 playerList.add(newPlayer)
             }
-            else playerList.add(Player(0,"",0))
+            else playerList.add(Player(0,name = "",points = 0))
         }
         application.game.players = this.playerList
     }
