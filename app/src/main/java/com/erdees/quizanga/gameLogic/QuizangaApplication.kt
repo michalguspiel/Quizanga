@@ -1,7 +1,7 @@
-package com.erdees.quizanga
+package com.erdees.quizanga.gameLogic
 
 import com.erdees.quizanga.models.Player
-import com.erdees.quizanga.screens.GameScreen
+import com.erdees.quizanga.screens.GameScoreboardScreen
 import com.erdees.quizanga.screens.Screen
 import com.erdees.quizanga.screens.SetGameScreen
 import com.erdees.quizanga.screens.WelcomeScreen
@@ -46,7 +46,7 @@ class QuizangaApplication() {
 
     fun setScreen() {
         screen = if (!game.hasStarted) WelcomeScreen()
-        else GameScreen(game)
+        else GameScoreboardScreen(game)
     }
 
 

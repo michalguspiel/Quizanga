@@ -1,4 +1,4 @@
-package com.erdees.quizanga
+package com.erdees.quizanga.gameLogic
 
 import com.erdees.quizanga.levelOfDifficult.Easy
 import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
@@ -12,6 +12,7 @@ class Game{
     var players : List<Player> = listOf()
     var numberOfTurns = 0
     var numberOfTurnsLeft = numberOfTurns
+    var gameId = 0L
 
     lateinit var gameWinner: Player
 

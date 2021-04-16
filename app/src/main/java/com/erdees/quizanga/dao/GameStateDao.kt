@@ -10,11 +10,11 @@ interface GameStateDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     suspend fun startGame(game : GameState) : Long
 
-    @Query("SELECT * FROM gamestate WHERE numberOfTurnsLeft > 0")
+    @Query("SELECT * FROM gamestate WHERE numberOfTurnsLeft > 0 ")
     fun getActiveGame(): LiveData<GameState>
 
     @Update
-    fun updateGame(game:GameState)
+    suspend fun updateGame(game:GameState)
 
 
 }

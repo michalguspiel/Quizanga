@@ -1,6 +1,7 @@
 package com.erdees.quizanga
 
 import android.app.Application
+import com.erdees.quizanga.gameLogic.QuizangaApplication
 
 class MainApplication : Application() {
     val quizangaApplication by lazy {

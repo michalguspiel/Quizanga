@@ -14,6 +14,6 @@ interface PlayerDao {
     fun getPlayersFromGame(gameId: Long): LiveData<List<Player>>
 
     @Update
-    fun updatePlayer(player: Player)
+    suspend fun updatePlayer(player: Player)
 
 }

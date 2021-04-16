@@ -3,7 +3,6 @@ package com.erdees.quizanga
 import android.view.InputDevice
 import android.view.MotionEvent
 import android.view.View
-import androidx.fragment.app.testing.FragmentScenario
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.Espresso.pressBack
@@ -17,8 +16,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import com.erdees.quizanga.fragments.SetGameFragment
-import com.erdees.quizanga.levelOfDifficult.Hard
+import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.Player
 import org.hamcrest.Matcher
 import org.junit.After
@@ -150,6 +148,7 @@ fun closeEverything(){
         onView(startGameButton).perform(click())
         onView(withId(R.id.view_set_game_start_button)).perform(click())
     }
+
 
 
 

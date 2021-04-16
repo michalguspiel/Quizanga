@@ -5,8 +5,6 @@ import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
 
 class BasicRepository(val dao: BasicDao) {
 
-    fun getLastAddedGameId() = dao.getLastAddedGameId()
-
     fun setAmountOfPlayers(number: Int) = dao.setAmountOfPlayers(number)
     fun getAmountOfPlayers() = dao.getAmountOfPlayers()
 

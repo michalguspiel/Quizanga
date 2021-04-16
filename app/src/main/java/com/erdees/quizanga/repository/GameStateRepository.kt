@@ -1,14 +1,14 @@
 package com.erdees.quizanga.repository
 
+import android.util.Log
 import com.erdees.quizanga.dao.BasicDao
 import com.erdees.quizanga.dao.GameStateDao
 import com.erdees.quizanga.models.GameState
 
-class GameStateRepository(private val stateDao: GameStateDao,private val basicDao: BasicDao) {
+class GameStateRepository(private val stateDao: GameStateDao) {
 
-    suspend fun startGame(game: GameState): Long  {
+     suspend fun startGame(game: GameState): Long  {
         val gameID = stateDao.startGame(game)
-        setLastAddedGameId(gameID)
         return gameID
     }
 
@@ -18,17 +18,13 @@ class GameStateRepository(private val stateDao: GameStateDao,private val basicDa
 
     fun getActiveGame() = stateDao.getActiveGame()
 
-    private fun setLastAddedGameId(gameId: Long) = basicDao.setLastAddedGameId(gameId)
-
-    fun lastAddedGameId() = basicDao.getLastAddedGameId() //This is here for ROOM TESTS
-
     companion object {
         @Volatile
         private var instance: GameStateRepository? = null
-        fun getInstance(gameStateDao: GameStateDao,basicDao: BasicDao) =
+        fun getInstance(gameStateDao: GameStateDao) =
             instance ?: synchronized(this) {
                 instance
-                    ?: GameStateRepository(gameStateDao,basicDao).also { instance = it }
+                    ?: GameStateRepository(gameStateDao).also { instance = it }
             }
     }
 }

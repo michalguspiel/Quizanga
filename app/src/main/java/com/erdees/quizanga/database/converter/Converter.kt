@@ -1,4 +1,4 @@
-package com.erdees.quizanga.database
+package com.erdees.quizanga.database.converter
 
 import androidx.room.TypeConverter
 import com.erdees.quizanga.levelOfDifficult.Easy

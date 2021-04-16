@@ -24,8 +24,6 @@ class SetGameFragmentViewModel : ViewModel() {
     }
 
 
-    fun getLastAddedGameId() = basicRepository.getLastAddedGameId()
-
     fun setAmountOfPlayers(number: Int) {
         basicRepository.setAmountOfPlayers(number)
     }

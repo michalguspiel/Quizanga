@@ -1,8 +1,9 @@
 package com.erdees.quizanga
 
+import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.levelOfDifficult.Hard
 import com.erdees.quizanga.models.Player
-import com.erdees.quizanga.screens.GameScreen
+import com.erdees.quizanga.screens.GameScoreboardScreen
 import com.erdees.quizanga.screens.SetGameScreen
 import com.erdees.quizanga.screens.WelcomeScreen
 import org.junit.Test
@@ -54,7 +55,7 @@ class QuizangaApplicationUnitTests {
         quizangaApplication.game.hasStarted = true
         quizangaApplication.setScreen()
         quizangaApplication.withScreenCallback { screen ->
-            assertEquals(true, screen is GameScreen)
+            assertEquals(true, screen is GameScoreboardScreen)
         }
     }
 
@@ -71,10 +72,10 @@ class QuizangaApplicationUnitTests {
         quizangaApplication.game.setAmountOfPlayers(4)
         quizangaApplication.setUpGame()
         quizangaApplication.addPlayer(
-            Player(0,"Michael",0))
-        quizangaApplication.addPlayer(Player(0,"Lori",0))
-        quizangaApplication.addPlayer(Player(0,"Mark",0))
-        quizangaApplication.addPlayer(Player(0,"Kevin",0))
+            Player(0,name = "Michael",points = 0))
+        quizangaApplication.addPlayer(Player(0,name = "Lori", points = 0))
+        quizangaApplication.addPlayer(Player(0,name = "Mark",points = 0))
+        quizangaApplication.addPlayer(Player(0,name = "Kevin",points = 0))
         quizangaApplication.savePlayers(quizangaApplication.playerList)
             quizangaApplication.withScreenCallback { screen ->
                 assertEquals(true, screen is SetGameScreen)
@@ -82,9 +83,9 @@ class QuizangaApplicationUnitTests {
             }
         }
 
-    private val michal = Player(0,"Michal",0)
-    private val moona = Player(0,"Moona",0)
-    private val random = Player(0,"RandomPerson",0)
+    private val michal = Player(0,name = "Michal",points = 0)
+    private val moona = Player(0,name="Moona",points = 0)
+    private val random = Player(0,name="RandomPerson",points = 0)
 
     private fun setUpTestGame(){
         quizangaApplication.open()
@@ -103,7 +104,7 @@ class QuizangaApplicationUnitTests {
         setUpTestGame()
         quizangaApplication.startGame()
         quizangaApplication.withScreenCallback { screen ->
-            assertEquals(true, screen is GameScreen)
+            assertEquals(true, screen is GameScoreboardScreen)
         }
     }
 
@@ -114,7 +115,7 @@ class QuizangaApplicationUnitTests {
         quizangaApplication.game.setAmountOfGameTurns(6)
         quizangaApplication.game.setAmountOfPlayers(10)
         quizangaApplication.withScreenCallback { screen ->
-            assertEquals(true, screen is GameScreen)
+            assertEquals(true, screen is GameScoreboardScreen)
         }
         assertEquals(quizangaApplication.game.numberOfTurns,10)
         assertEquals(quizangaApplication.game.playersAmount,3)

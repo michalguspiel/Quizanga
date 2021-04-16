@@ -7,6 +7,7 @@ import androidx.test.espresso.action.ViewActions
 import androidx.test.espresso.assertion.ViewAssertions
 import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.platform.app.InstrumentationRegistry
+import com.erdees.quizanga.gameLogic.QuizangaApplication
 import org.hamcrest.Matcher
 import org.junit.After
 import org.junit.Assert

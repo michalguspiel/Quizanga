@@ -1,21 +1,13 @@
 package com.erdees.quizanga
 
-import android.app.Application
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.test.platform.app.InstrumentationRegistry
+import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.levelOfDifficult.Hard
-import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
-import com.erdees.quizanga.repository.BasicRepository
 import com.erdees.quizanga.viewModels.SetGameFragmentViewModel
-import junit.framework.TestCase
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
-import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
 
 class ViewModelUnitTests {
 

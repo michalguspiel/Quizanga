@@ -8,6 +8,7 @@ import androidx.test.filters.SmallTest
 import com.erdees.quizanga.dao.BasicDao
 import com.erdees.quizanga.dao.GameStateDao
 import com.erdees.quizanga.dao.PlayerDao
+import com.erdees.quizanga.dao.StateAndPlayersDao
 import com.erdees.quizanga.database.AppRoomDatabase
 import com.erdees.quizanga.database.BasicDatabase
 import com.erdees.quizanga.levelOfDifficult.Easy
@@ -16,6 +17,7 @@ import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.repository.GameStateRepository
 import com.erdees.quizanga.repository.PlayerRepository
+import com.erdees.quizanga.repository.StateAndPlayersRepository
 import com.google.common.truth.Truth.assertThat
 import junit.framework.Assert.assertEquals
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,9 +40,10 @@ class RoomDatabaseTests {
     private lateinit var stateDao: GameStateDao
     private lateinit var stateRepository: GameStateRepository
     private lateinit var playerRepository: PlayerRepository
+    private lateinit var stateAndPlayersRepository : StateAndPlayersRepository
     private lateinit var playerDao: PlayerDao
     private lateinit var basicDao: BasicDao
-
+    private lateinit var stateAndPlayersDao : StateAndPlayersDao
     @Before
     fun setup() {
         database = Room.inMemoryDatabaseBuilder(
@@ -49,8 +52,10 @@ class RoomDatabaseTests {
         stateDao = database.gameStateDao()
         basicDao = BasicDatabase.getInstance().basicDao
         playerDao = database.playerDao()
-        stateRepository = GameStateRepository(stateDao, basicDao)
+        stateAndPlayersDao = database.stateAndPlayersDao()
+        stateRepository = GameStateRepository(stateDao)
         playerRepository = PlayerRepository(playerDao)
+        stateAndPlayersRepository = StateAndPlayersRepository(stateAndPlayersDao)
     }
 
     @After
@@ -58,9 +63,7 @@ class RoomDatabaseTests {
         database.close()
     }
 
-
     private var testGame = GameState(354L, 5, Hard, 1)
-
     private var firstPlayer = Player(123, 354L, name = "Michael", points = 0)
     private var secondPlayer = Player(312, 354L, name = "Jordan", points = 0)
     private var thirdPlayer = Player(7538, 354L, name = "Jackson", points = 0)
@@ -93,11 +96,6 @@ class RoomDatabaseTests {
         assertEquals(stateRepository.startGame(testGame), 354L)
     }
 
-    @Test
-    fun addingGameStateToDatabase_UpdatesLastAddedGameId() = runBlocking {
-        stateRepository.startGame(testGame)
-        assertEquals(354L, stateRepository.lastAddedGameId().value)
-    }
 
     @Test
     fun addingPlayerListToDatabase_EachOfThemShouldHaveReferenceToSameGameID() = runBlocking {
@@ -164,14 +162,33 @@ class RoomDatabaseTests {
     fun whenGameDifficultyIsEasy_WrongAnswer_ShouldNotRemovePoints() = runBlocking {
         val easyGame = GameState(333, 2, Easy, 1)
         stateRepository.startGame(easyGame)
-        val easyGamePlayer1 = Player(1,333L,"EasyPlayer1",0)
-        val easyGamePlayer2 = Player(2,333L,"EasyPlayer2",0)
-        val playerList = listOf(easyGamePlayer1,easyGamePlayer2)
+        val easyGamePlayer1 = Player(1, 333L, "EasyPlayer1", 0)
+        val easyGamePlayer2 = Player(2, 333L, "EasyPlayer2", 0)
+        val playerList = listOf(easyGamePlayer1, easyGamePlayer2)
         playerRepository.savePlayersIntoGame(playerList)
-        assertEquals(playerRepository.getPlayersFromGame(333).getOrAwaitValue().size,2)
-        easyGamePlayer1.points = easyGamePlayer1.pointsAfterWrongAnswer(easyGame.difficultyLevel.pointsRemovedPerWrongAnswer())
+        assertEquals(playerRepository.getPlayersFromGame(333).getOrAwaitValue().size, 2)
+        easyGamePlayer1.points =
+            easyGamePlayer1.pointsAfterWrongAnswer(easyGame.difficultyLevel.pointsRemovedPerWrongAnswer())
         playerRepository.updatePoints(easyGamePlayer1)
-        val firstPlayerButFromDatabase = playerRepository.getPlayersFromGame(easyGame.gameId).getOrAwaitValue().first()
-        assertEquals(firstPlayerButFromDatabase.points,0)
+        val firstPlayerButFromDatabase =
+            playerRepository.getPlayersFromGame(easyGame.gameId).getOrAwaitValue().first()
+        assertEquals(0,firstPlayerButFromDatabase.points)
     }
+
+
+    @Test
+    fun whenStartingGame_And_AddingItsPlayers_RelationWithThem_ShouldBeMade() = runBlocking {
+        stateRepository.startGame(testGame)
+        playerRepository.savePlayersIntoGame(playerList)
+        val stateAndPlayers = stateAndPlayersRepository.getStateAndPlayersOfThisGame(testGame.gameId).getOrAwaitValue()
+        assertEquals(3,stateAndPlayers.listOfPlayers.size)
+    }
+
 }
+
+
+
+
+
+
+

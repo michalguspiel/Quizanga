@@ -11,8 +11,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.erdees.quizanga.Game
-import com.erdees.quizanga.QuizangaApplication
+import com.erdees.quizanga.gameLogic.Game
+import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
 import com.erdees.quizanga.levelOfDifficult.Easy
 import com.erdees.quizanga.levelOfDifficult.Hard
@@ -97,23 +97,22 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
           if(it != null)  application.game.difficultLevel = it
         })
 
-
         return view
     }
 
     private fun createNewGameStateInDatabase(game: Game){
-        val newGameState = GameState(0,game.numberOfTurns,game.difficultLevel,game.currentTurnCounter)
-        androidViewModel.startGame(newGameState)
-        val gameId = viewModel.getLastAddedGameId().value
-        createPlayersInDatabase(playerList,gameId!!)
+        val newGameState = GameState(game.gameId,game.numberOfTurns,game.difficultLevel,game.currentTurnCounter)
+        val gameId = androidViewModel.startGame(newGameState)
+        createPlayersInDatabase(playerList, gameId)
     }
 
-    private fun preparePlayerListToSave(gameId: Long){
+    private fun preparePlayerListToSaveBySettingGameID(gameId: Long){
+        Log.i(TAG, gameId.toString())
         playerList.forEach { it.gameId = gameId }
     }
 
     private fun createPlayersInDatabase(playerList: List<Player>,gameId: Long){
-        preparePlayerListToSave(gameId)
+        preparePlayerListToSaveBySettingGameID(gameId)
         androidViewModel.savePlayersIntoGame(playerList)
     }
 
@@ -138,9 +137,8 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
 
     private fun startNewGame(){
         application.game.players = playerList
-        application.startGame()
-        application.updateScreen(application.screen)
         createNewGameStateInDatabase(application.game)
+        application.updateScreen(application.screen)
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){

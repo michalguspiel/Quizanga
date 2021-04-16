@@ -1,6 +1,7 @@
 package com.erdees.quizanga.viewModels
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.erdees.quizanga.database.AppRoomDatabase
@@ -11,18 +12,19 @@ import com.erdees.quizanga.repository.BasicRepository
 import com.erdees.quizanga.repository.GameStateRepository
 import com.erdees.quizanga.repository.PlayerRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SetGameFragmentAndroidViewModel(application: Application) : AndroidViewModel(application) {
 
-    val gameStateRepository : GameStateRepository
-    val playerRepository : PlayerRepository
+    private val gameStateRepository : GameStateRepository
+    private val playerRepository : PlayerRepository
 
     init {
         val playerDao = AppRoomDatabase.getDatabase(application).playerDao()
-        val basicDao = BasicDatabase.getInstance().basicDao
         val gameStateDao = AppRoomDatabase.getDatabase(application).gameStateDao()
-        gameStateRepository = GameStateRepository(gameStateDao,basicDao)
+        gameStateRepository = GameStateRepository(gameStateDao)
         playerRepository = PlayerRepository(playerDao)
 
     }
@@ -32,12 +34,9 @@ class SetGameFragmentAndroidViewModel(application: Application) : AndroidViewMod
             playerRepository.savePlayersIntoGame(playerList)
         }
     }
+   fun startGame(gameState : GameState):Long = runBlocking {
+             gameStateRepository.startGame(gameState)
+       }
 
-    fun startGame(gameState : GameState) {
-        viewModelScope.launch(Dispatchers.IO){
-            gameStateRepository.startGame(gameState)
-        }
-
-    }
 
 }
