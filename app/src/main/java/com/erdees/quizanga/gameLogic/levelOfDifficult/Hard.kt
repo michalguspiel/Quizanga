@@ -1,4 +1,4 @@
-package com.erdees.quizanga.levelOfDifficult
+package com.erdees.quizanga.gameLogic.levelOfDifficult
 
 object Hard: LevelOfDifficult {
     override var name: String = "Hard"

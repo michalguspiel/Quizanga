@@ -11,8 +11,8 @@ import com.erdees.quizanga.dao.PlayerDao
 import com.erdees.quizanga.dao.StateAndPlayersDao
 import com.erdees.quizanga.database.AppRoomDatabase
 import com.erdees.quizanga.database.BasicDatabase
-import com.erdees.quizanga.levelOfDifficult.Easy
-import com.erdees.quizanga.levelOfDifficult.Hard
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Easy
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.repository.GameStateRepository

@@ -2,7 +2,7 @@ package com.erdees.quizanga.models
 
 import androidx.room.*
 import com.erdees.quizanga.database.converter.Converter
-import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 
 @Entity
 class GameState(

@@ -1,7 +1,7 @@
 package com.erdees.quizanga.gameLogic
 
-import com.erdees.quizanga.levelOfDifficult.Easy
-import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Easy
+import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.models.Player
 
 class Game{

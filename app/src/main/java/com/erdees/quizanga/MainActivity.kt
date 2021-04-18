@@ -8,15 +8,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
+import com.erdees.quizanga.fragments.GameQuestionFragment
 import com.erdees.quizanga.fragments.GameScoreboardFragment
 import com.erdees.quizanga.fragments.SetGameFragment
 import com.erdees.quizanga.fragments.WelcomeFragment
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
+import com.erdees.quizanga.screens.GameQuestionScreen
 import com.erdees.quizanga.screens.GameScoreboardScreen
 import com.erdees.quizanga.screens.SetGameScreen
 import com.erdees.quizanga.screens.WelcomeScreen
 import com.erdees.quizanga.viewModels.MainActivityViewModel
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,6 +40,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
+
+
 
         frame = findViewById(R.id.activity_main_frame)
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
@@ -90,6 +98,11 @@ class MainActivity : AppCompatActivity() {
                     val fragment = GameScoreboardFragment.newInstance()
                     fragment.application = quizangaApplication
                     openFragment(fragment,GameScoreboardFragment.TAG)
+                }
+                is GameQuestionScreen -> {
+                    val fragment = GameQuestionFragment.newInstance()
+                    fragment.application = quizangaApplication
+                    openFragment(fragment,GameQuestionFragment.TAG)
                 }
             }
         }

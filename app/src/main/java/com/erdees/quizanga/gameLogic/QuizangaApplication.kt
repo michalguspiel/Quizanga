@@ -1,10 +1,7 @@
 package com.erdees.quizanga.gameLogic
 
 import com.erdees.quizanga.models.Player
-import com.erdees.quizanga.screens.GameScoreboardScreen
-import com.erdees.quizanga.screens.Screen
-import com.erdees.quizanga.screens.SetGameScreen
-import com.erdees.quizanga.screens.WelcomeScreen
+import com.erdees.quizanga.screens.*
 
 
 class QuizangaApplication() {
@@ -29,6 +26,11 @@ class QuizangaApplication() {
         game.numberOfTurnsLeft = game.numberOfTurns
         game.hasStarted = true
         setScreen()
+    }
+
+    fun proceedWithQuestion(){
+        if(game.numberOfTurnsLeft == 0) return // open screen Game Result to show End Result, scoreboards, whatevs TODO
+        else screen = GameQuestionScreen(game.players[game.currentTurnCounter])
     }
 
     fun open() {

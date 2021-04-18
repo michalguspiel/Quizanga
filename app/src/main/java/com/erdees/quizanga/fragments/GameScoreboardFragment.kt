@@ -15,6 +15,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
 import com.erdees.quizanga.models.Player
+import com.erdees.quizanga.openFragment
+import com.erdees.quizanga.screens.GameQuestionScreen
+import com.erdees.quizanga.screens.WelcomeScreen
 import com.erdees.quizanga.viewModels.GameScoreboardFragmentViewModel
 
 class GameScoreboardFragment: Fragment() {
@@ -37,14 +40,25 @@ class GameScoreboardFragment: Fragment() {
             })
 
         button.setOnClickListener {
-            startRound()
+        startRound()
         }
 
         return view
     }
 
     private fun startRound(){
-
+        application.proceedWithQuestion()
+        Log.i(TAG,application.screen.toString())
+        Log.i(TAG,application.game.numberOfTurnsLeft.toString())
+        application.withScreenCallback { screen ->
+            when (screen) {
+                is GameQuestionScreen -> {
+                    val fragment = GameQuestionFragment.newInstance()
+                    fragment.application = application
+                    openFragment(fragment,GameQuestionFragment.TAG,this.parentFragmentManager)
+                }
+            }
+        }
     }
 
     private fun setScoreboard(playerList: List<Player>){

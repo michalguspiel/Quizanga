@@ -1,8 +1,9 @@
 package com.erdees.quizanga
 
 import com.erdees.quizanga.gameLogic.QuizangaApplication
-import com.erdees.quizanga.levelOfDifficult.Hard
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
 import com.erdees.quizanga.models.Player
+import com.erdees.quizanga.screens.GameQuestionScreen
 import com.erdees.quizanga.screens.GameScoreboardScreen
 import com.erdees.quizanga.screens.SetGameScreen
 import com.erdees.quizanga.screens.WelcomeScreen
@@ -210,7 +211,33 @@ class QuizangaApplicationUnitTests {
 
         assert(game.hasEnded)
         assertEquals(true, game.gameWinner == michal)
+    }
 
+    @Test
+    fun `Given I open  an app and want to get first turn question Screen is GameQuestionScreen`(){
+        setUpTestGame()
+        quizangaApplication.startGame()
+        quizangaApplication.withScreenCallback { screen ->
+            assertEquals(true, screen is GameScoreboardScreen)
+        }
+        quizangaApplication.proceedWithQuestion()
+        quizangaApplication.withScreenCallback { screen ->
+            assertEquals(true, screen is GameQuestionScreen)
+        }
+    }
+
+    @Test
+    fun `Given I open app and and there is no more turns left, when trying to proceed with question Screen isn't GameQuestionScreen`(){
+        setUpTestGame()
+        quizangaApplication.startGame()
+        quizangaApplication.withScreenCallback { screen ->
+            assertEquals(true, screen is GameScoreboardScreen)
+        }
+        quizangaApplication.game.numberOfTurnsLeft = 0
+        quizangaApplication.proceedWithQuestion()
+        quizangaApplication.withScreenCallback { screen ->
+            assertEquals(false, screen is GameQuestionScreen)
+        }
     }
 
     }

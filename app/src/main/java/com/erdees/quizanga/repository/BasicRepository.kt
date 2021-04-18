@@ -1,7 +1,7 @@
 package com.erdees.quizanga.repository
 
 import com.erdees.quizanga.dao.BasicDao
-import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 
 class BasicRepository(val dao: BasicDao) {
 

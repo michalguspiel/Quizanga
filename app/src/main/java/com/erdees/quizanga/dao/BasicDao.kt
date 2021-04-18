@@ -1,9 +1,8 @@
 package com.erdees.quizanga.dao
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 
 class BasicDao {
 

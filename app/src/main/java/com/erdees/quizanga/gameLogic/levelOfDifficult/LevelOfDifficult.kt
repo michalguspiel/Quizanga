@@ -1,4 +1,4 @@
-package com.erdees.quizanga.levelOfDifficult
+package com.erdees.quizanga.gameLogic.levelOfDifficult
 
 
 interface LevelOfDifficult {

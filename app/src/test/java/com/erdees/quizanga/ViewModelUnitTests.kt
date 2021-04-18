@@ -2,7 +2,7 @@ package com.erdees.quizanga
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.erdees.quizanga.gameLogic.QuizangaApplication
-import com.erdees.quizanga.levelOfDifficult.Hard
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
 import com.erdees.quizanga.viewModels.SetGameFragmentViewModel
 import org.junit.Assert.*
 import org.junit.Before

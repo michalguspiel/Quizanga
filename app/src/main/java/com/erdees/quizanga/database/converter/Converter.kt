@@ -1,9 +1,9 @@
 package com.erdees.quizanga.database.converter
 
 import androidx.room.TypeConverter
-import com.erdees.quizanga.levelOfDifficult.Easy
-import com.erdees.quizanga.levelOfDifficult.Hard
-import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Easy
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
+import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 
 class Converter {
     @TypeConverter

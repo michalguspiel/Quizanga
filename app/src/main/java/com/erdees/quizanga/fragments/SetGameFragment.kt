@@ -14,9 +14,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.gameLogic.Game
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
-import com.erdees.quizanga.levelOfDifficult.Easy
-import com.erdees.quizanga.levelOfDifficult.Hard
-import com.erdees.quizanga.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Easy
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
+import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.viewModels.SetGameFragmentAndroidViewModel
