@@ -42,9 +42,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
-
-
         frame = findViewById(R.id.activity_main_frame)
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
@@ -58,13 +55,12 @@ class MainActivity : AppCompatActivity() {
             else Log.i(TAG,"Game not found!")
             loadScreen()
         })
-
+        viewModel.addQuestions()
     }
 
     private fun setApplicationGamePlayersToFromGameState(playerList: List<Player>){
         with(quizangaApplication.game){
             players = playerList
-            playersAmount = playerList.size
             Log.i(TAG,quizangaApplication.game.players.joinToString ("   "){ it.name })
         }
     }

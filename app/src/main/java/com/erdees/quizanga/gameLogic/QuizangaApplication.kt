@@ -15,6 +15,12 @@ class QuizangaApplication() {
     lateinit var screen: Screen
     val playerList : MutableList<Player> = mutableListOf()
 
+    var sessionQuestionCounter = 0
+
+    fun incrementQuestionCounter() {
+        sessionQuestionCounter ++
+    }
+
     fun setUpGame() {
         screen = SetGameScreen(listOf())
         this.screenCallback(screen)

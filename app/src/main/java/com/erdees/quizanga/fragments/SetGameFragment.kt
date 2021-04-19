@@ -88,8 +88,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
             roundCountTextView.text = application.game.numberOfTurns.toString()
         })
         viewModel.getAmountOfPlayers().observe(viewLifecycleOwner,{amount ->
-            application.game.setAmountOfPlayers(amount)
-            playersCountTextView.text = application.game.playersAmount.toString()
+            playersCountTextView.text = application.game.players.size.toString()
             saveListOfPlayersFromLayoutToList()
             setListOfPlayersAccordingly(amount)
         })
@@ -125,7 +124,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     }
 
     private fun oneOfNameIsEmpty():Boolean{
-        val playerAmount = application.game.playersAmount
+        val playerAmount = application.game.players.size
         Log.i("Player amount:" , playerAmount.toString())
         for (i in 0 until playerAmount){
             val rowView = playerListLayout.getChildAt(i)

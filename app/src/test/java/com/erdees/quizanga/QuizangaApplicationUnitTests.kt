@@ -60,17 +60,11 @@ class QuizangaApplicationUnitTests {
         }
     }
 
-    @Test
-    fun `When calling function changing amount of players  game playersAmount variable actually changes`() {
-        quizangaApplication.open()
-        quizangaApplication.game.setAmountOfPlayers(5)
-        assertEquals(5,quizangaApplication.game.playersAmount)
-    }
+
 
     @Test
     fun `Given I have to make game with 4 players, And I add 4 players to the list, there's 4 players in SetUpGameScreen`(){
         quizangaApplication.open()
-        quizangaApplication.game.setAmountOfPlayers(4)
         quizangaApplication.setUpGame()
         quizangaApplication.addPlayer(
             Player(0,name = "Michael",points = 0))
@@ -90,7 +84,6 @@ class QuizangaApplicationUnitTests {
 
     private fun setUpTestGame(){
         quizangaApplication.open()
-        quizangaApplication.game.setAmountOfPlayers(3)
         quizangaApplication.setUpGame()
         quizangaApplication.addPlayer(michal)
         quizangaApplication.addPlayer(moona)
@@ -114,12 +107,11 @@ class QuizangaApplicationUnitTests {
         setUpTestGame()
         quizangaApplication.startGame()
         quizangaApplication.game.setAmountOfGameTurns(6)
-        quizangaApplication.game.setAmountOfPlayers(10)
         quizangaApplication.withScreenCallback { screen ->
             assertEquals(true, screen is GameScoreboardScreen)
         }
         assertEquals(quizangaApplication.game.numberOfTurns,10)
-        assertEquals(quizangaApplication.game.playersAmount,3)
+        assertEquals(quizangaApplication.game.players.size,3)
     }
 
     @Test
@@ -173,7 +165,7 @@ class QuizangaApplicationUnitTests {
         game.correctAnswer(game.playerWithTurn())
         game.wrongAnswer(game.playerWithTurn())
         assertEquals(game.numberOfTurns -1 , game.numberOfTurnsLeft)
-        assertEquals(game.currentTurnCounter,game.players.indexOf(michal)+1)
+        assertEquals(game.currentTurnCounter,game.players.indexOf(michal))
     }
 
     @Test
@@ -184,8 +176,8 @@ class QuizangaApplicationUnitTests {
         game.correctAnswer(game.playerWithTurn())
         game.correctAnswer(game.playerWithTurn())
         game.wrongAnswer(game.playerWithTurn())
-        assertEquals(game.numberOfTurns -1 , game.numberOfTurnsLeft)
-        assertEquals(game.currentTurnCounter,game.players.indexOf(michal)+1)
+        assertEquals(game.numberOfTurns-1  , game.numberOfTurnsLeft)
+        assertEquals(game.currentTurnCounter,game.players.indexOf(michal))
         game.wrongAnswer(game.playerWithTurn())
         assertEquals(game.playerWithTurn(), moona)
         game.wrongAnswer(game.playerWithTurn())

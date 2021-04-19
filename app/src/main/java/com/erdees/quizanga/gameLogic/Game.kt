@@ -7,7 +7,6 @@ import com.erdees.quizanga.models.Player
 class Game{
     var hasEnded = false
     var hasStarted  = false
-    var playersAmount = 0
     var difficultLevel: LevelOfDifficult = Easy
     var players : List<Player> = listOf()
     var numberOfTurns = 0
@@ -16,17 +15,12 @@ class Game{
 
     lateinit var gameWinner: Player
 
-    private fun turnLength():Int = playersAmount
+    private fun turnLength():Int = players.size
 
-    var currentTurnCounter = 1
+    var currentTurnCounter = 0
 
     fun playerWithTurn(): Player {
-        return players[currentTurnCounter-1]
-    }
-
-    fun setAmountOfPlayers(number: Int) {
-        if (hasStarted)return
-        playersAmount = number
+        return players[currentTurnCounter]
     }
 
 
@@ -45,8 +39,8 @@ class Game{
 
     private fun iterateTurn() {
         currentTurnCounter += 1
-        if(currentTurnCounter > turnLength()){
-            currentTurnCounter = 1
+        if(currentTurnCounter >= turnLength()){
+            currentTurnCounter = 0
             numberOfTurnsLeft -= 1
         }
 

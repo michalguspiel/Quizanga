@@ -1,37 +1,56 @@
 package com.erdees.quizanga.viewModels
 
-import android.provider.Settings.Secure.ANDROID_ID
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.erdees.quizanga.database.AppRoomDatabase
+import com.erdees.quizanga.database.BasicDatabase
+import com.erdees.quizanga.models.GameState
+import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.models.Question
+import com.erdees.quizanga.models.Questions
+import com.erdees.quizanga.repository.BasicRepository
+import com.erdees.quizanga.repository.GameStateRepository
+import com.erdees.quizanga.repository.PlayerRepository
 import com.erdees.quizanga.repository.QuestionRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class GameQuestionFragmentViewModel: ViewModel() {
+class GameQuestionFragmentViewModel(application: Application): AndroidViewModel(application) {
 
-    val questionLiveData : MutableLiveData<Question> = MutableLiveData()
-    val questionRepository  = QuestionRepository()
+val basicRepository : BasicRepository
+val gameStateRepository : GameStateRepository
+val playerRepository : PlayerRepository
 
-    fun getQuestion() {
-        val question = questionRepository.getQuestion()
-        question.enqueue(object : Callback<Question> {
-            override fun onResponse(call: Call<Question>, response: Response<Question>) {
-                Log.i("QUESTION","WORKED!")
-                Log.i("QUESTION","${response.isSuccessful}!")
-                Log.i("QUESTION", response.body().toString())
-                    val questionResponse = response.body()!!
-                    questionLiveData.value = questionResponse
+init {
+    val gameStateDao = AppRoomDatabase.getDatabase(application).gameStateDao()
+    val playerDao = AppRoomDatabase.getDatabase(application).playerDao()
+    val basicDao = BasicDatabase.getInstance().basicDao
+    basicRepository = BasicRepository(basicDao)
+    gameStateRepository = GameStateRepository(gameStateDao)
+    playerRepository = PlayerRepository(playerDao)
+}
 
-            }
+     fun updatePoints(player: Player) {
+         viewModelScope.launch(Dispatchers.IO) {
+         playerRepository.updatePoints(player)
+        }
+     }
 
-            override fun onFailure(call: Call<Question>, t: Throwable) {
-                Log.i("QUESTION", "Failed ${t.message}")
-            }
-        })
+    fun updateGameState(gameState : GameState ){
+        viewModelScope.launch(Dispatchers.IO) {
+            gameStateRepository.updateGame(gameState)
+        }
     }
 
+    fun getQuestion() = basicRepository.getQuestions()
+
+    fun addMoreQuestions() = basicRepository.setQuestionsOrAddIfLivedataAlreadyExists()
 
 }

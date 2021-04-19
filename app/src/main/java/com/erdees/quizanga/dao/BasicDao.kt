@@ -1,11 +1,15 @@
 package com.erdees.quizanga.dao
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.models.Questions
 
 class BasicDao {
 
+    private var questions : Questions? = null
+    private val questionsLive = MutableLiveData<Questions?>()
 
     private var amountOfPlayers = 0
     private val amountOfPlayersLive = MutableLiveData<Int>()
@@ -20,8 +24,21 @@ class BasicDao {
         amountOfPlayersLive.value = amountOfPlayers
         amountOfGameTurnsLive.value = amountOfGameTurns
         difficultLevelLive.value = difficultLevel
+        questionsLive.value = questions
     }
 
+    fun setQuestions(questionsToSet: Questions){
+        questions = questionsToSet
+        questionsLive.value = questions
+    }
+
+    fun addQuestions(questionsToAdd: Questions){
+        Log.i("TEST", "ADD questions casted")
+        questions = questionsToAdd
+        questionsLive.value!!.results += questions!!.results
+    }
+
+    fun getQuestions() = questionsLive as LiveData<Questions>
 
     fun setAmountOfGameTurns(number: Int){
         amountOfGameTurns = number
