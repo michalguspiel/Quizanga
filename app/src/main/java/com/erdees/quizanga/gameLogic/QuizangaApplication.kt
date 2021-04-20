@@ -1,5 +1,6 @@
 package com.erdees.quizanga.gameLogic
 
+import android.util.Log
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.screens.*
 
@@ -35,7 +36,11 @@ class QuizangaApplication() {
     }
 
     fun proceedWithQuestion(){
-        if(game.numberOfTurnsLeft == 0) return // open screen Game Result to show End Result, scoreboards, whatevs TODO
+        if(game.numberOfTurnsLeft == 0) {
+            game.hasEnded = true
+            return
+            Log.i("TEST","GAME ENDED!!!")
+        } // open screen Game Result to show End Result, scoreboards, whatevs TODO
         else screen = GameQuestionScreen(game.players[game.currentTurnCounter])
     }
 
@@ -52,9 +57,14 @@ class QuizangaApplication() {
         screen = SetGameScreen(playerList as List<Player>)
     }
 
-    fun setScreen() {
-        screen = if (!game.hasStarted) WelcomeScreen()
-        else GameScoreboardScreen(game)
+    fun setScreen(){
+        screen = when {
+            !game.hasStarted -> WelcomeScreen()
+            game.currentTurnCounter != 0 && game.players.isEmpty() -> LoadingScreen()
+             game.currentTurnCounter != 0 -> GameQuestionScreen(game.players[game.currentTurnCounter])
+             else -> GameScoreboardScreen(game)
+        }
+        Log.i("TEST", "Set screen casted : $screen")
     }
 
 

@@ -60,7 +60,12 @@ class QuizangaApplicationUnitTests {
         }
     }
 
-
+    @Test
+    fun `When calling function changing amount of players  game playersAmount variable actually changes`() {
+        quizangaApplication.open()
+        quizangaApplication.game.setAmountOfPlayers(5)
+        assertEquals(5,quizangaApplication.game.playersAmount)
+    }
 
     @Test
     fun `Given I have to make game with 4 players, And I add 4 players to the list, there's 4 players in SetUpGameScreen`(){

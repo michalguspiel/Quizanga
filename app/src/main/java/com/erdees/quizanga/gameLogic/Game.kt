@@ -8,6 +8,7 @@ class Game{
     var hasEnded = false
     var hasStarted  = false
     var difficultLevel: LevelOfDifficult = Easy
+    var playersAmount = 0
     var players : List<Player> = listOf()
     var numberOfTurns = 0
     var numberOfTurnsLeft = numberOfTurns
@@ -21,6 +22,11 @@ class Game{
 
     fun playerWithTurn(): Player {
         return players[currentTurnCounter]
+    }
+
+    fun setAmountOfPlayers(number: Int) {
+        if (hasStarted)return
+        playersAmount = number
     }
 
 

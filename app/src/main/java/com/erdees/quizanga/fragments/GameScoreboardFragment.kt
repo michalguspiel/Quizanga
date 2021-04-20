@@ -48,8 +48,6 @@ class GameScoreboardFragment: Fragment() {
 
     private fun startRound(){
         application.proceedWithQuestion()
-        Log.i(TAG,application.screen.toString())
-        Log.i(TAG,application.game.numberOfTurnsLeft.toString())
         application.withScreenCallback { screen ->
             when (screen) {
                 is GameQuestionScreen -> {

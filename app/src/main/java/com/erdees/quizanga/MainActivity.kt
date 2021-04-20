@@ -8,21 +8,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
-import com.erdees.quizanga.fragments.GameQuestionFragment
-import com.erdees.quizanga.fragments.GameScoreboardFragment
-import com.erdees.quizanga.fragments.SetGameFragment
-import com.erdees.quizanga.fragments.WelcomeFragment
+import com.erdees.quizanga.fragments.*
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
-import com.erdees.quizanga.screens.GameQuestionScreen
-import com.erdees.quizanga.screens.GameScoreboardScreen
-import com.erdees.quizanga.screens.SetGameScreen
-import com.erdees.quizanga.screens.WelcomeScreen
+import com.erdees.quizanga.screens.*
 import com.erdees.quizanga.viewModels.MainActivityViewModel
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
+
+    private val loadingFragment = LoadingFragment.newInstance()
 
      private val quizangaApplication by lazy {
         (application as MainApplication).quizangaApplication
@@ -40,28 +36,33 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+        openFragment(loadingFragment,LoadingFragment.TAG)
 
         frame = findViewById(R.id.activity_main_frame)
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
+        viewModel.addQuestions()
 
         viewModel.getActiveGameState().observe(this,  { gameState ->
             if(gameState != null ) {
                 setApplicationGameObjectAsGameState(gameState)
+
         viewModel.getPlayersFromThisGameState(gameState.gameId).observe(this, { playerList ->
             setApplicationGamePlayersToFromGameState(playerList)
         })
             }
-            else Log.i(TAG,"Game not found!")
-            loadScreen()
+            else{
+                loadScreen()
+                Log.i(TAG,"Game not found!")
+            }
         })
-        viewModel.addQuestions()
     }
 
     private fun setApplicationGamePlayersToFromGameState(playerList: List<Player>){
         with(quizangaApplication.game){
             players = playerList
             Log.i(TAG,quizangaApplication.game.players.joinToString ("   "){ it.name })
+            Log.i(TAG,quizangaApplication.screen.toString())
+         loadScreen()
         }
     }
     private fun setApplicationGameObjectAsGameState(gameState: GameState){
@@ -75,10 +76,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+
     private fun loadScreen() {
+        Log.i(TAG,"Load Screen Casted")
         quizangaApplication.setScreen()
         quizangaApplication.withScreenCallback { screen ->
-            frame.removeAllViews()
             when (screen) {
                 is WelcomeScreen -> {
                     val fragment = WelcomeFragment.newInstance()
@@ -96,13 +98,36 @@ class MainActivity : AppCompatActivity() {
                     openFragment(fragment,GameScoreboardFragment.TAG)
                 }
                 is GameQuestionScreen -> {
-                    val fragment = GameQuestionFragment.newInstance()
-                    fragment.application = quizangaApplication
-                    openFragment(fragment,GameQuestionFragment.TAG)
+                    if (isCurrentlyGameQuestionFragmentCurrentlyShown() == true) refreshGameQuestionFragment()
+                    else {
+                        Log.i(TAG, "Game question fragment tried to be opened!")
+                        val fragment = GameQuestionFragment.newInstance()
+                        fragment.application = quizangaApplication
+                        openFragment(fragment, GameQuestionFragment.TAG)
+                    }
+                }
+                is LoadingScreen  -> {
+                    val fragment = LoadingFragment.newInstance()
+                    openFragment(fragment, LoadingFragment.TAG)
                 }
             }
         }
 
+    }
+    private fun refreshGameQuestionFragment(){
+       val fragment = supportFragmentManager.findFragmentByTag(GameQuestionFragment.TAG)
+       val ft =  supportFragmentManager.beginTransaction()
+        if (fragment != null) {
+            Log.i(TAG, "Game question fragment tried to be recreated!")
+            ft.detach(fragment)
+            ft.attach(fragment)
+            ft.commit()
+        }
+
+    }
+
+    private fun isCurrentlyGameQuestionFragmentCurrentlyShown() : Boolean?{
+        return supportFragmentManager.findFragmentByTag(GameQuestionFragment.TAG)?.isVisible
     }
 
     private fun openFragment(fragment: Fragment, fragmentTag: String) {

@@ -4,5 +4,9 @@
     <string name="PLAYER_DIALOG_BUTTON_ID">144421</string>
     <string name="TURN_NUMBER_PICKER_ID">145211</string>
     <string name="TURN_DIALOG_BUTTON_ID">523112</string>
+    <string name="ID_OF_CORRECT_ANSWER">248552532</string>
+    <string name="ID_OF_INCORRECT_ANSWER1">17494372</string>
+    <string name="ID_OF_INCORRECT_ANSWER2">376840949</string>
+    <string name="ID_OF_INCORRECT_ANSWER3">457648291</string>
 
 </resources>
