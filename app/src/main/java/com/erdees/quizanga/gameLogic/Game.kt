@@ -43,6 +43,10 @@ class Game{
         return highestSoFar
     }
 
+     fun playersInOrderOfPoints() : List<Player> {
+       return players.sortedBy { it.points }
+    }
+
     private fun iterateTurn() {
         currentTurnCounter += 1
         if(currentTurnCounter >= turnLength()){

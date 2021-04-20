@@ -20,10 +20,11 @@ class QuizangaApplication() {
 
     fun incrementQuestionCounter() {
         sessionQuestionCounter ++
+        proceedWithQuestion()
     }
 
     fun setUpGame() {
-        screen = SetGameScreen(listOf())
+        screen = SetGameScreen()
         this.screenCallback(screen)
     }
 
@@ -38,9 +39,8 @@ class QuizangaApplication() {
     fun proceedWithQuestion(){
         if(game.numberOfTurnsLeft == 0) {
             game.hasEnded = true
-            return
-            Log.i("TEST","GAME ENDED!!!")
-        } // open screen Game Result to show End Result, scoreboards, whatevs TODO
+            screen = ResultScreen()
+        }
         else screen = GameQuestionScreen(game.players[game.currentTurnCounter])
     }
 
@@ -54,17 +54,17 @@ class QuizangaApplication() {
 
     fun savePlayers(playerList : MutableList<Player>) {
         game.players = playerList
-        screen = SetGameScreen(playerList as List<Player>)
+        screen = SetGameScreen()
     }
 
     fun setScreen(){
         screen = when {
             !game.hasStarted -> WelcomeScreen()
             game.currentTurnCounter != 0 && game.players.isEmpty() -> LoadingScreen()
-             game.currentTurnCounter != 0 -> GameQuestionScreen(game.players[game.currentTurnCounter])
+             game.currentTurnCounter != 0 -> BetweenQuestionScreen()
+            game.hasEnded -> ResultScreen()
              else -> GameScoreboardScreen(game)
         }
-        Log.i("TEST", "Set screen casted : $screen")
     }
 
 

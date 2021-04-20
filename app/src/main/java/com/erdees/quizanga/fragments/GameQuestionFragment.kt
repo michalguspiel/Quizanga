@@ -13,7 +13,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
 import com.erdees.quizanga.gameLogic.QuizangaApplication
@@ -23,6 +22,11 @@ import com.erdees.quizanga.models.Question
 import com.erdees.quizanga.viewModels.GameQuestionFragmentViewModel
 import kotlin.random.Random
 
+
+/** TODO TODO TODO
+ *  BUGS IN HERE
+ *  WHY CORRECT BUTTON IS ALWAYS BLINKING CORRECTLY AND RED ISN'T
+ * */
 
 class GameQuestionFragment : Fragment() {
 
@@ -35,11 +39,7 @@ class GameQuestionFragment : Fragment() {
     private var ID_OF_BUTTON_WITH_INCORRECT_ANSWER_1: Int = 0
     private var ID_OF_BUTTON_WITH_INCORRECT_ANSWER_2: Int = 0
     private var ID_OF_BUTTON_WITH_INCORRECT_ANSWER_3: Int = 0
-    private val listOfIncorrectButtonIds = listOf(
-        ID_OF_BUTTON_WITH_INCORRECT_ANSWER_1,
-        ID_OF_BUTTON_WITH_INCORRECT_ANSWER_2,
-        ID_OF_BUTTON_WITH_INCORRECT_ANSWER_3
-    )
+    private lateinit var listOfIncorrectButtonIds : List<Int>
     private val alphabet = listOf("A", "B", "C", "D")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +55,11 @@ class GameQuestionFragment : Fragment() {
         ID_OF_BUTTON_WITH_INCORRECT_ANSWER_1 = requireActivity().resources.getString(R.string.ID_OF_INCORRECT_ANSWER1).toInt()
         ID_OF_BUTTON_WITH_INCORRECT_ANSWER_2 = requireActivity().resources.getString(R.string.ID_OF_INCORRECT_ANSWER2).toInt()
         ID_OF_BUTTON_WITH_INCORRECT_ANSWER_3 = requireActivity().resources.getString(R.string.ID_OF_INCORRECT_ANSWER3).toInt()
+        listOfIncorrectButtonIds = listOf(
+            ID_OF_BUTTON_WITH_INCORRECT_ANSWER_1,
+            ID_OF_BUTTON_WITH_INCORRECT_ANSWER_2,
+            ID_OF_BUTTON_WITH_INCORRECT_ANSWER_3
+        )
         viewModel = ViewModelProvider(this).get(GameQuestionFragmentViewModel::class.java)
 
         viewModel.getQuestion().observe(viewLifecycleOwner, { allQuestions ->
@@ -103,6 +108,7 @@ class GameQuestionFragment : Fragment() {
             listOfIncorrectButtons[i].text =
                 alphabet[i] + ". " + Html.fromHtml(question.incorrect_answers[i])
             listOfIncorrectButtons[i].id = listOfIncorrectButtonIds[i]
+            Log.i(TAG,"id for incorrect button set : ${listOfIncorrectButtonIds[i]}")
         }
         allButtonList.forEach { answersLayout.addView(it) }
 
@@ -120,15 +126,15 @@ class GameQuestionFragment : Fragment() {
 
     private fun questionAnswered(idOfButton: Int) {
         val chosenButton = view?.findViewById<Button>(idOfButton)
-        if (answerIsCorrect(idOfButton)) lightButtonAccordiglyToAnswer(
+        if (answerIsCorrect(idOfButton)) lightButtonAccordingToAnswer(
             chosenButton!!,
             R.color.green_500,
             true
         )
-        else lightButtonAccordiglyToAnswer(chosenButton!!, R.color.red_500,false)
+        else lightButtonAccordingToAnswer(chosenButton!!, R.color.red_500,false)
     }
 
-    private fun lightButtonAccordiglyToAnswer(button: Button, colorId: Int, isAnswerCorrect: Boolean) {
+    private fun lightButtonAccordingToAnswer(button: Button, colorId: Int, isAnswerCorrect: Boolean) {
         button.setBackgroundColor(resources.getColor(colorId))
         val anim: Animation = AlphaAnimation(0.0f, 1.0f)
         anim.duration = 500
@@ -210,8 +216,6 @@ class GameQuestionFragment : Fragment() {
         )
 
     }
-
-
 
 
     private fun randomizePositionOfCorrectAnswer(): Int {
