@@ -17,6 +17,7 @@ import com.erdees.quizanga.R
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Easy
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
 import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
+import com.erdees.quizanga.gameLogic.levelOfDifficult.Medium
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.viewModels.SetGameFragmentAndroidViewModel
@@ -56,7 +57,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         val view = inflater.inflate(R.layout.set_game_fragment, container, false)
         viewModel = ViewModelProvider(this).get(SetGameFragmentViewModel::class.java)
         androidViewModel = ViewModelProvider(this).get(SetGameFragmentAndroidViewModel::class.java)
-        levelsList = listOf(Easy, Hard)
+        levelsList = listOf(Easy, Medium, Hard)
 
         /**Binders*/
         playersCountTextView = view.findViewById(R.id.view_set_game_player_count)
@@ -101,13 +102,13 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     }
 
     private fun createNewGameStateInDatabase(game: Game){
+        game.gameId = 0
         val newGameState = GameState(game.gameId,game.numberOfTurns,game.difficultLevel,game.currentTurnCounter)
         val gameId = androidViewModel.startGame(newGameState)
         createPlayersInDatabase(playerList, gameId)
     }
 
     private fun preparePlayerListToSaveBySettingGameID(gameId: Long){
-        Log.i(TAG, gameId.toString())
         playerList.forEach { it.gameId = gameId }
     }
 
@@ -138,7 +139,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private fun startNewGame(){
         application.game.players = playerList
         createNewGameStateInDatabase(application.game)
-        application.updateScreen(application.screen)
+      //  application.updateScreen(application.screen) TODO
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){
@@ -214,7 +215,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         submitButton.id = resources.getString(R.string.TURN_DIALOG_BUTTON_ID).toInt()
         submitButton.setOnClickListener {
             setNumberOfTurns(turnsNumberPicker.value)
-        roundsDialog.dismiss()
+             roundsDialog.dismiss()
         }
     }
 

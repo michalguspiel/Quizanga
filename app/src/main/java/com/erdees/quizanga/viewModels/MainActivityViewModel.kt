@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import com.erdees.quizanga.database.AppRoomDatabase
 import com.erdees.quizanga.database.BasicDatabase
+import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.repository.BasicRepository
 import com.erdees.quizanga.repository.GameStateRepository
 import com.erdees.quizanga.repository.PlayerRepository
@@ -23,7 +24,7 @@ class MainActivityViewModel(application: Application): AndroidViewModel(applicat
         basicRepository = BasicRepository(basicDao)
     }
 
-    fun addQuestions() = basicRepository.setQuestionsOrAddIfLivedataAlreadyExists()
+    fun addQuestions(difficult: LevelOfDifficult) = basicRepository.setQuestionsOrAddIfLiveDataAlreadyExists(difficult)
     fun getQuestions() = basicRepository.getQuestions()
 
     fun getActiveGameState() = stateRepository.getActiveGame()

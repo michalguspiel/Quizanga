@@ -10,7 +10,7 @@ import retrofit2.Response
 
 class BasicRepository(val dao: BasicDao) {
 
-    val questionRepository = QuestionRepository()
+    private val questionRepository = QuestionRepository()
 
     fun setAmountOfPlayers(number: Int) = dao.setAmountOfPlayers(number)
     fun getAmountOfPlayers() = dao.getAmountOfPlayers()
@@ -22,9 +22,9 @@ class BasicRepository(val dao: BasicDao) {
     fun getDifficultLevel() = dao.getDifficultLevel()
 
     fun getQuestions() = dao.getQuestions()
-    fun setQuestionsOrAddIfLivedataAlreadyExists(){
+    fun setQuestionsOrAddIfLiveDataAlreadyExists(difficult: LevelOfDifficult){
         val currentQuestionsLiveData = dao.getQuestions()
-        val question = questionRepository.getQuestion()
+        val question = questionRepository.getQuestion(difficult)
         question.enqueue(object : Callback<Questions> {
             override fun onResponse(call: Call<Questions>, response: Response<Questions>) {
                 if(response.isSuccessful) {

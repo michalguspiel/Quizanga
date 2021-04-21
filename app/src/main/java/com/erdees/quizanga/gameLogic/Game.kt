@@ -44,7 +44,7 @@ class Game{
     }
 
      fun playersInOrderOfPoints() : List<Player> {
-       return players.sortedBy { it.points }
+       return players.sortedBy { it.points }.reversed()
     }
 
     private fun iterateTurn() {

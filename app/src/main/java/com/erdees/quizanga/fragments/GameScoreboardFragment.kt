@@ -1,8 +1,7 @@
 package com.erdees.quizanga.fragments
 
 import android.os.Bundle
-import android.text.Layout
-import android.util.Log
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +9,12 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
+import com.erdees.quizanga.Utils.openFragment
 import com.erdees.quizanga.models.Player
-import com.erdees.quizanga.openFragment
 import com.erdees.quizanga.screens.GameQuestionScreen
-import com.erdees.quizanga.screens.WelcomeScreen
 import com.erdees.quizanga.viewModels.GameScoreboardFragmentViewModel
 
 class GameScoreboardFragment: Fragment() {
@@ -26,6 +23,7 @@ class GameScoreboardFragment: Fragment() {
     lateinit var scoreBoardLayout : LinearLayout
     lateinit var viewModel : GameScoreboardFragmentViewModel
     lateinit var button : Button
+    lateinit var roundsLeftTV : TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,15 +33,23 @@ class GameScoreboardFragment: Fragment() {
         viewModel = ViewModelProvider(this).get(GameScoreboardFragmentViewModel::class.java)
         scoreBoardLayout = view.findViewById(R.id.game_fragment_linear_layout)
         button = view.findViewById(R.id.game_scoreboard_start_game)
+        roundsLeftTV = view.findViewById(R.id.game_scoreboard_rounds_left)
         viewModel.getPlayersForThisGame(application.game.gameId).observe(viewLifecycleOwner, {
                 setScoreboard(it)
+            application.game.players = it
             })
+        roundsLeftTV.text =  roundsLeft()
 
         button.setOnClickListener {
         startRound()
         }
 
         return view
+    }
+
+    private fun roundsLeft():String{
+       return if(application.game.numberOfTurnsLeft <=1) "Last round!"
+           else "${application.game.numberOfTurnsLeft} rounds left."
     }
 
     private fun startRound(){

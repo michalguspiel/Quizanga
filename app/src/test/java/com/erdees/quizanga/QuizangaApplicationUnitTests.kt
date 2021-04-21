@@ -3,10 +3,7 @@ package com.erdees.quizanga
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
 import com.erdees.quizanga.models.Player
-import com.erdees.quizanga.screens.GameQuestionScreen
-import com.erdees.quizanga.screens.GameScoreboardScreen
-import com.erdees.quizanga.screens.SetGameScreen
-import com.erdees.quizanga.screens.WelcomeScreen
+import com.erdees.quizanga.screens.*
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -67,21 +64,6 @@ class QuizangaApplicationUnitTests {
         assertEquals(5,quizangaApplication.game.playersAmount)
     }
 
-    @Test
-    fun `Given I have to make game with 4 players, And I add 4 players to the list, there's 4 players in SetUpGameScreen`(){
-        quizangaApplication.open()
-        quizangaApplication.setUpGame()
-        quizangaApplication.addPlayer(
-            Player(0,name = "Michael",points = 0))
-        quizangaApplication.addPlayer(Player(0,name = "Lori", points = 0))
-        quizangaApplication.addPlayer(Player(0,name = "Mark",points = 0))
-        quizangaApplication.addPlayer(Player(0,name = "Kevin",points = 0))
-        quizangaApplication.savePlayers(quizangaApplication.playerList)
-            quizangaApplication.withScreenCallback { screen ->
-                assertEquals(true, screen is SetGameScreen)
-                assertEquals((screen as SetGameScreen).listOfPlayers.size,4)
-            }
-        }
 
     private val michal = Player(0,name = "Michal",points = 0)
     private val moona = Player(0,name="Moona",points = 0)
@@ -236,6 +218,44 @@ class QuizangaApplicationUnitTests {
             assertEquals(false, screen is GameQuestionScreen)
         }
     }
+
+    @Test
+    fun `Given there's 5 players with with points different points function playersInOrderOfPoints should return correct list`(){
+        quizangaApplication.open()
+        quizangaApplication.setUpGame()
+        val michal = Player(0,name="Michal",points = 999)
+        val kevin = Player(0,name="Kevin",points = 100)
+        quizangaApplication.addPlayer(michal)
+        quizangaApplication.addPlayer(Player(0,name="Moona",points = 150))
+        quizangaApplication.addPlayer(Player(0,name="Silver",points = 300))
+        quizangaApplication.addPlayer(Player(0,name="Jackson",points = 300))
+        quizangaApplication.addPlayer(kevin)
+        quizangaApplication.savePlayers(quizangaApplication.playerList)
+        quizangaApplication.game.setAmountOfGameTurns(10)
+        quizangaApplication.startGame()
+
+        assertEquals(quizangaApplication.game.playersInOrderOfPoints().first(),michal)
+        assertEquals(quizangaApplication.game.playersInOrderOfPoints().last(),kevin)
+    }
+
+    @Test
+    fun `Given the last question of the game has just been answered,game has ended, screen is Result screen and applicationGame object has restarted `(){
+        setUpTestGame()
+        quizangaApplication.game.setAmountOfGameTurns(3)
+        quizangaApplication.startGame()
+        repeat(9) {
+            quizangaApplication.game.correctAnswer(quizangaApplication.game.playerWithTurn())
+        }
+        assert(quizangaApplication.game.hasEnded)
+        quizangaApplication.proceedWithQuestion()
+        quizangaApplication.withScreenCallback { screen ->
+            assertEquals(true, screen is ResultScreen)
+        }
+        quizangaApplication.restartGame()
+        assertEquals(false,quizangaApplication.game.hasStarted)
+
+    }
+
 
     }
 

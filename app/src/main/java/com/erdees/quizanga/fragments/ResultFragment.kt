@@ -1,6 +1,7 @@
 package com.erdees.quizanga.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,9 +9,8 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.erdees.quizanga.R
+import com.erdees.quizanga.Utils.openFragment
 import com.erdees.quizanga.gameLogic.QuizangaApplication
-import com.erdees.quizanga.openFragment
-import com.erdees.quizanga.screens.GameQuestionScreen
 import com.erdees.quizanga.screens.SetGameScreen
 
 class ResultFragment : Fragment() {
@@ -35,10 +35,12 @@ class ResultFragment : Fragment() {
 
 
         button.setOnClickListener {
+            restartGame()
             application.screen = SetGameScreen()
             application.withScreenCallback { screen ->
                 when (screen) {
                     is SetGameScreen -> {
+                        Log.i(TAG,"screen callback casted")
                         val fragment = SetGameFragment.newInstance()
                         fragment.application = application
                         openFragment(fragment,SetGameFragment.TAG,this.parentFragmentManager)
@@ -47,12 +49,12 @@ class ResultFragment : Fragment() {
             }
 
         }
-
-
-
-
         return view
+    }
 
+    private fun restartGame(){
+        application.restartGame()
+        Log.i(TAG,  application.game.gameId.toString() + application.game.hasEnded.toString() + application.game.hasStarted.toString() + application.game.players.size.toString() )
     }
 
     companion object {

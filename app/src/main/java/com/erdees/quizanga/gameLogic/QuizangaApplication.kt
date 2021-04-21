@@ -5,7 +5,7 @@ import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.screens.*
 
 
-class QuizangaApplication() {
+class QuizangaApplication {
 
     private object NoActionScreenCallback : (Screen) -> Unit {
         override fun invoke(screen: Screen) {}
@@ -14,13 +14,12 @@ class QuizangaApplication() {
     private var screenCallback: (Screen) -> Unit = NoActionScreenCallback
     lateinit var game: Game
     lateinit var screen: Screen
-    val playerList : MutableList<Player> = mutableListOf()
+    val playerList: MutableList<Player> = mutableListOf()
 
     var sessionQuestionCounter = 0
 
     fun incrementQuestionCounter() {
-        sessionQuestionCounter ++
-        proceedWithQuestion()
+        sessionQuestionCounter++
     }
 
     fun setUpGame() {
@@ -29,41 +28,44 @@ class QuizangaApplication() {
     }
 
 
-    fun startGame(){
-        if(game.numberOfTurns==0) return
+    fun startGame() {
+        if (game.numberOfTurns == 0) return
         game.numberOfTurnsLeft = game.numberOfTurns
         game.hasStarted = true
         setScreen()
     }
 
-    fun proceedWithQuestion(){
-        if(game.numberOfTurnsLeft == 0) {
+    fun proceedWithQuestion() {
+        if (game.numberOfTurnsLeft == 0) {
             game.hasEnded = true
             screen = ResultScreen()
-        }
-        else screen = GameQuestionScreen(game.players[game.currentTurnCounter])
+        } else screen = GameQuestionScreen(game.players[game.currentTurnCounter])
+    }
+
+    fun restartGame() {
+        game = Game()
     }
 
     fun open() {
         game = Game()
     }
 
-    fun addPlayer(player : Player){
+    fun addPlayer(player: Player) {
         playerList.add(player)
     }
 
-    fun savePlayers(playerList : MutableList<Player>) {
+    fun savePlayers(playerList: MutableList<Player>) {
         game.players = playerList
         screen = SetGameScreen()
     }
 
-    fun setScreen(){
+    fun setScreen() {
         screen = when {
             !game.hasStarted -> WelcomeScreen()
             game.currentTurnCounter != 0 && game.players.isEmpty() -> LoadingScreen()
-             game.currentTurnCounter != 0 -> BetweenQuestionScreen()
+            game.currentTurnCounter != 0 -> BetweenQuestionScreen()
             game.hasEnded -> ResultScreen()
-             else -> GameScoreboardScreen(game)
+            else -> GameScoreboardScreen(game)
         }
     }
 

@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Quizanga</string>
+    <string name="True">True</string>
+    <string name="False">False</string>
 </resources>
