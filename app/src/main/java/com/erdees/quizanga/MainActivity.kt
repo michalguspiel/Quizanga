@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.FrameLayout
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
 import com.erdees.quizanga.Utils.openFragment
@@ -54,12 +56,21 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    /**Setting players in Game object accordingly to active game state
+     * function load screen is inside getQuestions().observe because otherwise function loadScreen is called before questions are downlaoded.
+     * Function load screen is in here because Screen needs to be refreshed every time any player gets updated.
+     *
+     * For now it works like this, because I'm using room and liveData, basically I need refreshed [GameState] and [Player] every time I'm loading new fragment
+     * I could load it manually every time question is answered but then anyways liveData has to refresh fragment because if I get it from .value it's gonna return
+     * NULL. I hate how it works but for now It will stay like this, I have no idea yet how to improve it. TODO*/
     private fun setApplicationGamePlayersFromGameState(playerList: List<Player>) {
         with(quizangaApplication.game) {
             players = playerList
             playersAmount = playerList.size
         }
-        loadScreen()
+        viewModel.getQuestions().observe(this,  { questions ->
+            if(questions != null) loadScreen()
+        })
         Log.i(TAG,"setting players from game state ")
     }
 
@@ -73,15 +84,18 @@ class MainActivity : AppCompatActivity() {
             currentTurnCounter = gameState.roundCounter
         }
         viewModel.getQuestions().observe(this,{ allQuestions ->
-            if(allQuestions == null)viewModel.addQuestions(quizangaApplication.game.difficultLevel)
+            if(allQuestions == null){Log.i(TAG,"questions tried to be added")
+                viewModel.addQuestions(quizangaApplication.game.difficultLevel)
+            }
         })
-        viewModel.getPlayersFromThisGameState(gameState.gameId).observe(this, { playerList ->
+        viewModel.getPlayersFromThisGameState(gameState.gameId).observe(  this , { playerList ->
             setApplicationGamePlayersFromGameState(playerList)
         })
     }
 
 
     private fun loadScreen() {
+        Log.i(TAG,"Load screen casted!")
         quizangaApplication.setScreen()
         quizangaApplication.withScreenCallback { screen ->
             when (screen) {
@@ -104,11 +118,6 @@ class MainActivity : AppCompatActivity() {
                     val fragment = GameQuestionFragment.newInstance()
                     fragment.application = quizangaApplication
                     openFragment(fragment, GameQuestionFragment.TAG,supportFragmentManager)
-                }
-                is BetweenQuestionScreen -> {
-                    val fragment = BetweenQuestionFragment.newInstance()
-                    fragment.application = quizangaApplication
-                    openFragment(fragment, BetweenQuestionFragment.TAG,supportFragmentManager)
                 }
                 is LoadingScreen -> {
                     val fragment = LoadingFragment.newInstance()

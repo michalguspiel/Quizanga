@@ -10,13 +10,14 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils.openFragment
+import com.erdees.quizanga.Utils.playSound
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.screens.SetGameScreen
 
 class ResultFragment : Fragment() {
 
     lateinit var application: QuizangaApplication
-
+    lateinit var third : TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,14 +26,19 @@ class ResultFragment : Fragment() {
         val view = inflater.inflate(R.layout.result_fragment, container, false)
         val first = view.findViewById<TextView>(R.id.result_first)
         val second = view.findViewById<TextView>(R.id.result_second)
-        val third = view.findViewById<TextView>(R.id.result_third)
+        third = view.findViewById<TextView>(R.id.result_third)
         val button = view.findViewById<Button>(R.id.result_button)
+        val winner = application.game.playersInOrderOfPoints()[0]
+        val secondPlace = application.game.playersInOrderOfPoints()[1]
 
-        first.text = "1st. " +  application.game.playersInOrderOfPoints()[0].name
-        second.text = "2nd. " + application.game.playersInOrderOfPoints()[1].name
+        first.text = "${winner.name} with ${winner.points} points."
+        second.text = "2nd. ${secondPlace.name} with ${secondPlace.points} points."
         if(application.game.playersAmount < 3) third.visibility = View.GONE
-        else third.text = "3rd. " + application.game.playersInOrderOfPoints()[2].name
+        else showThird()
 
+
+
+        playSound(R.raw.game_ended,this.requireContext())
 
         button.setOnClickListener {
             restartGame()
@@ -50,6 +56,11 @@ class ResultFragment : Fragment() {
 
         }
         return view
+    }
+
+    private fun showThird(){
+        val thirdPlace = application.game.playersInOrderOfPoints()[2]
+        third.text = "3rd. ${thirdPlace.name} with ${thirdPlace.points} points."
     }
 
     private fun restartGame(){

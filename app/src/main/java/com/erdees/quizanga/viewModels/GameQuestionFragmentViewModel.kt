@@ -44,7 +44,8 @@ class GameQuestionFragmentViewModel(application: Application) : AndroidViewModel
     fun getPlayersForThisGame(gameId: Long) = playerRepository.getPlayersFromGame(gameId)
 
 
-    fun getQuestion() = basicRepository.getQuestions()
+
+    fun getQuestions() = basicRepository.getQuestions()
 
     fun addMoreQuestions(difficult: LevelOfDifficult) = basicRepository.setQuestionsOrAddIfLiveDataAlreadyExists(difficult)
 

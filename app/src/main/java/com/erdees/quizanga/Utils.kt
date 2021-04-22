@@ -1,6 +1,8 @@
 package com.erdees.quizanga
 
 import android.app.ActionBar
+import android.content.Context
+import android.media.MediaPlayer
 import android.text.Layout
 import android.view.View
 import android.view.ViewGroup
@@ -35,6 +37,13 @@ object Utils {
         )
         layoutParams.setMargins(dp)
         this.layoutParams = layoutParams
+    }
+
+    fun playSound(soundResource: Int,context : Context){
+        val mp = MediaPlayer.create(context,soundResource)
+        mp.setOnCompletionListener { it.release() }
+        mp.start()
+
     }
 
 }

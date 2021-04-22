@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.TableRow
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -69,6 +70,7 @@ class GameScoreboardFragment: Fragment() {
         for (eachPlayer in 0 until(playerList.size)){
             val inflater = LayoutInflater.from(requireContext()).inflate(R.layout.item_game_scoreboard,null)
             scoreBoardLayout.addView(inflater)
+            if(eachPlayer == playerList.size-1) inflater.findViewById<TableRow>(R.id.scoreboard_table_row).visibility = View.GONE
         }
         populateScoreboard(playerList)
     }

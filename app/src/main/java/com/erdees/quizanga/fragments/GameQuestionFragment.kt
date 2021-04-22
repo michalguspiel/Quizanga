@@ -2,12 +2,9 @@ package com.erdees.quizanga.fragments
 
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
-import android.animation.ValueAnimator
 import android.annotation.SuppressLint
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.Bundle
-import android.renderscript.Sampler
 import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,15 +15,12 @@ import android.view.animation.Animation
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
-import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
-import com.erdees.quizanga.Utils
 import com.erdees.quizanga.Utils.addMargin
+import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
@@ -65,8 +59,8 @@ class GameQuestionFragment : Fragment() {
         alphabet = mutableListOf("A", "B", "C", "D")
 
         viewModel = ViewModelProvider(this).get(GameQuestionFragmentViewModel::class.java)
-        viewModel.getQuestion().observe(viewLifecycleOwner, { allQuestions ->
-            if (Utils.appWillSoonRunOutOfQuestions(
+        viewModel.getQuestions().observe(viewLifecycleOwner, { allQuestions ->
+            if (appWillSoonRunOutOfQuestions(
                     allQuestions.results.size,
                     application.sessionQuestionCounter
                 )
@@ -243,7 +237,6 @@ class GameQuestionFragment : Fragment() {
         application.game.correctAnswer(player)
         viewModel.updatePoints(player)
         application.incrementQuestionCounter()
-
         updateGameState()
         Log.i(TAG, "Answered correctly!")
     }

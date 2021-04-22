@@ -33,12 +33,12 @@ class BasicDao {
     }
 
     fun addQuestions(questionsToAdd: Questions){
-        Log.i("TEST", "ADD questions casted")
+        Log.i("BasicDao", "ADD questions casted")
         questions = questionsToAdd
         questionsLive.value!!.results += questions!!.results
     }
 
-    fun getQuestions() = questionsLive as LiveData<Questions>
+    fun getQuestion() = questionsLive as LiveData<Questions>
 
     fun setAmountOfGameTurns(number: Int){
         amountOfGameTurns = number

@@ -8,6 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "com.erdees.quizanga"
         minSdkVersion 19
         targetSdkVersion 30

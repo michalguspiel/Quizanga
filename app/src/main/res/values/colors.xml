@@ -11,4 +11,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="button_color">#6CC4FF</color>
     <color name="orange_color">#FF801F</color>
+    <color name="mtrl_textinput_default_box_stroke_color">@color/white</color>
 </resources>

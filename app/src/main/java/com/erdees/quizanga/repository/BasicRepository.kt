@@ -21,9 +21,10 @@ class BasicRepository(val dao: BasicDao) {
     fun setLevelOfDifficulty(level: LevelOfDifficult) = dao.setLevelOfDifficulty(level)
     fun getDifficultLevel() = dao.getDifficultLevel()
 
-    fun getQuestions() = dao.getQuestions()
+    fun getQuestions() = dao.getQuestion()
+
     fun setQuestionsOrAddIfLiveDataAlreadyExists(difficult: LevelOfDifficult){
-        val currentQuestionsLiveData = dao.getQuestions()
+        val currentQuestionsLiveData = dao.getQuestion()
         val question = questionRepository.getQuestion(difficult)
         question.enqueue(object : Callback<Questions> {
             override fun onResponse(call: Call<Questions>, response: Response<Questions>) {

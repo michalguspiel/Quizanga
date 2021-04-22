@@ -39,7 +39,7 @@ class QuizangaApplication {
         if (game.numberOfTurnsLeft == 0) {
             game.hasEnded = true
             screen = ResultScreen()
-        } else screen = GameQuestionScreen(game.players[game.currentTurnCounter])
+        } else screen = GameQuestionScreen()
     }
 
     fun restartGame() {
@@ -63,7 +63,8 @@ class QuizangaApplication {
         screen = when {
             !game.hasStarted -> WelcomeScreen()
             game.currentTurnCounter != 0 && game.players.isEmpty() -> LoadingScreen()
-            game.currentTurnCounter != 0 -> BetweenQuestionScreen()
+           // game.currentTurnCounter != 0 -> BetweenQuestionScreen()
+            game.currentTurnCounter != 0 -> GameQuestionScreen()
             game.hasEnded -> ResultScreen()
             else -> GameScoreboardScreen(game)
         }
