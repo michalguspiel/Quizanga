@@ -1,9 +1,13 @@
 package com.erdees.quizanga.fragments
 
 import android.animation.ArgbEvaluator
+import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.annotation.SuppressLint
+import android.media.MediaPlayer
+import android.os.Build
 import android.os.Bundle
+import android.renderscript.Sampler
 import android.text.Html
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,12 +18,15 @@ import android.view.animation.Animation
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.core.view.setPadding
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils
+import com.erdees.quizanga.Utils.addMargin
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
@@ -41,6 +48,8 @@ class GameQuestionFragment : Fragment() {
     private var ID_OF_BUTTON_WITH_INCORRECT_ANSWER_3: Int = 0
     private lateinit var listOfIncorrectButtonIds: List<Int>
     private lateinit var alphabet: MutableList<String>
+    private val red = 0xFFFF0000
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,11 +60,11 @@ class GameQuestionFragment : Fragment() {
         val questionTV = view.findViewById<TextView>(R.id.game_question_question)
         val categoryTV = view.findViewById<TextView>(R.id.game_question_category)
         answersLayout = view.findViewById(R.id.game_question_answers_layout)
+
         setButtonIdsAndIncorrectButtonIdList()
         alphabet = mutableListOf("A", "B", "C", "D")
 
         viewModel = ViewModelProvider(this).get(GameQuestionFragmentViewModel::class.java)
-
         viewModel.getQuestion().observe(viewLifecycleOwner, { allQuestions ->
             if (Utils.appWillSoonRunOutOfQuestions(
                     allQuestions.results.size,
@@ -74,12 +83,10 @@ class GameQuestionFragment : Fragment() {
             Log.i(TAG, thisQuestion.correct_answer)
         })
 
-
         viewModel.getPlayersForThisGame(application.game.gameId).observe(viewLifecycleOwner,
-            Observer {
+             {
                 playerWithTurn = it[application.game.currentTurnCounter]
                 playerNameTextView.text = "Question for " + playerWithTurn.name
-                it.forEach { Log.i(TAG, it.name) }
             })
 
         return view
@@ -111,18 +118,36 @@ class GameQuestionFragment : Fragment() {
         val buttonD = Button(requireContext())
         val allButtonList = listOf(buttonA, buttonB, buttonC, buttonD)
         val buttonWithCorrectAnswer = allButtonList[positionOfCorrectAnswer]
-        setCorrectButtonTextAndId(
-            buttonWithCorrectAnswer, alphabet[allButtonList.indexOf(
-                allButtonList[positionOfCorrectAnswer]
-            )]
-        )
+        setCorrectButtonTextAndId(buttonWithCorrectAnswer, alphabet[allButtonList.indexOf(allButtonList[positionOfCorrectAnswer])])
         val listOfIncorrectButtons = allButtonList - buttonWithCorrectAnswer
         setWrongButtonsTextAndIds(listOfIncorrectButtons)
         allButtonList.forEach { button ->
+            button.addMargin(5)
+            button.setBackgroundResource(R.drawable.answer_button)
             answersLayout.addView(button)
             button.setOnClickListener {
                 questionAnswered(button.id)
                 allButtonList.blockAllButtons()
+            }
+        }
+    }
+
+    private fun setAnswersAsBoolean() {
+        val buttonTrue = Button(requireContext())
+        val buttonFalse = Button(requireContext())
+        val thisButtons = listOf(buttonTrue, buttonFalse)
+        buttonTrue.text = getString(R.string.True)
+        buttonFalse.text = getString(R.string.False)
+        thisButtons.forEach { button ->
+            button.setBackgroundResource(R.drawable.answer_button)
+            button.addMargin(5)
+            answersLayout.addView(button) }
+        if (question.correct_answer == "True") setIdOfBooleanAnswersButtons(buttonTrue, buttonFalse)
+        else setIdOfBooleanAnswersButtons(buttonFalse, buttonTrue)
+        thisButtons.forEach { button ->
+            button.setOnClickListener {
+                questionAnswered(button.id)
+                thisButtons.blockAllButtons()
             }
         }
     }
@@ -160,42 +185,28 @@ class GameQuestionFragment : Fragment() {
         else lightWrongAnswerOnRedAndLightCorrectAnswerOnGreen(chosenButton!!)
     }
 
+
+
     private fun lightWrongAnswerOnRedAndLightCorrectAnswerOnGreen(button: Button) {
+        playSound(false)
         val blinkingAnim: Animation = AlphaAnimation(1.0f, 0.2f)
-        val colorAnimation: ValueAnimator = ValueAnimator.ofObject(
-            ArgbEvaluator(),
-            button.background,
-            R.color.red_500
+        val colorAnimation: ObjectAnimator = ObjectAnimator.ofInt(
+            button,
+            "backgroundColor",
+            R.color.button_color,
+            red.toInt(),
         )
-        colorAnimation.duration = 250
+        setColorAnimation(colorAnimation)
         setAnimation(blinkingAnim)
         val correctButton = view?.findViewById<Button>(ID_OF_BUTTON_WITH_CORRECT_ANSWER)
         correctButton!!.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.green_500))
-        blinkingAnim.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationStart(animation: Animation?) {
-            }
-
-            override fun onAnimationEnd(animation: Animation?) {
-                answeredWrongly(playerWithTurn)
-            }
-
-            override fun onAnimationRepeat(animation: Animation?) {
-            }
-        })
-        colorAnimation.addUpdateListener (object : ValueAnimator.AnimatorUpdateListener {
-            override fun onAnimationUpdate(animation: ValueAnimator?) {
-            //    button.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.red_500))
-         // TODO MAKE IT WORK
-            }
-
-        } )
-
         colorAnimation.start()
         correctButton.startAnimation(blinkingAnim)
     }
 
 
     private fun lightCorrectAnswer(button: Button) {
+        playSound(true)
         button.setBackgroundColor(resources.getColor(R.color.green_500))
         val anim: Animation = AlphaAnimation(1.0f, 0.2f)
         setAnimation(anim)
@@ -211,22 +222,7 @@ class GameQuestionFragment : Fragment() {
         button.startAnimation(anim)
     }
 
-    private fun setAnswersAsBoolean() {
-        val buttonTrue = Button(requireContext())
-        val buttonFalse = Button(requireContext())
-        val thisButtons = listOf(buttonTrue, buttonFalse)
-        buttonTrue.text = getString(R.string.True)
-        buttonFalse.text = getString(R.string.False)
-        thisButtons.forEach { answersLayout.addView(it) }
-        if (question.correct_answer == "True") setIdOfBooleanAnswersButtons(buttonTrue, buttonFalse)
-        else setIdOfBooleanAnswersButtons(buttonFalse, buttonTrue)
-        thisButtons.forEach { button ->
-            button.setOnClickListener {
-                questionAnswered(button.id)
-                thisButtons.blockAllButtons()
-            }
-        }
-    }
+
 
     private fun setIdOfBooleanAnswersButtons(correctButton: Button, wrongButton: Button) {
         correctButton.id = ID_OF_BUTTON_WITH_CORRECT_ANSWER
@@ -260,6 +256,10 @@ class GameQuestionFragment : Fragment() {
         Log.i(TAG, "Answered wrongly!")
     }
 
+    private fun setColorAnimation(animation : ObjectAnimator){
+        animation.duration = 600
+        animation.setEvaluator(ArgbEvaluator())
+    }
 
     private fun setAnimation(animation: Animation) {
         with(animation) {
@@ -267,8 +267,24 @@ class GameQuestionFragment : Fragment() {
             startOffset = 20
             repeatMode = Animation.REVERSE
             repeatCount = 3
-
+            setAnimationListener(object : Animation.AnimationListener {
+                override fun onAnimationStart(animation: Animation?) {
+                }
+                override fun onAnimationEnd(animation: Animation?) {
+                    answeredWrongly(playerWithTurn)
+                }
+                override fun onAnimationRepeat(animation: Animation?) {
+                }
+            })
         }
+    }
+
+    private fun playSound(isAnswerCorrect : Boolean){
+        val correctSound = MediaPlayer.create(requireContext(),R.raw.correct_answer)
+        val wrongSound = MediaPlayer.create(requireContext(),R.raw.wrong_answer)
+        correctSound.setOnCompletionListener { it.release() }
+        wrongSound.setOnCompletionListener { it.release() }
+        if(isAnswerCorrect) correctSound.start() else wrongSound.start()
     }
 
     private fun List<Button>.blockAllButtons() {
