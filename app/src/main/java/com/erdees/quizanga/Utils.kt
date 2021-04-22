@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import com.erdees.quizanga.Utils.addMargin
+import com.erdees.quizanga.models.Player
 
 object Utils {
 
@@ -43,7 +44,10 @@ object Utils {
         val mp = MediaPlayer.create(context,soundResource)
         mp.setOnCompletionListener { it.release() }
         mp.start()
+    }
 
+    fun List<Player>.sortByPoints(): List<Player>{
+        return this.sortedBy { it.points }.reversed()
     }
 
 }

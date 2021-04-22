@@ -8,10 +8,11 @@
 
     <TextView
         android:id="@+id/game_question_player_name_tv"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="80dp"
-        android:text="Question for YOU"
+        android:gravity="center"
+        tools:text="Question for OIALKGHBOIABHDFipdbhnalokfbhakjlfbaskfjl"
         android:textSize="26sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:gravity="center_horizontal"
-        android:text="Question"
+        tools:text="Question"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

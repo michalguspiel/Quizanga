@@ -63,7 +63,6 @@ class QuizangaApplication {
         screen = when {
             !game.hasStarted -> WelcomeScreen()
             game.currentTurnCounter != 0 && game.players.isEmpty() -> LoadingScreen()
-           // game.currentTurnCounter != 0 -> BetweenQuestionScreen()
             game.currentTurnCounter != 0 -> GameQuestionScreen()
             game.hasEnded -> ResultScreen()
             else -> GameScoreboardScreen(game)
@@ -76,7 +75,7 @@ class QuizangaApplication {
         updateScreen(screen)
     }
 
-    fun updateScreen(screen: Screen) {
+    private fun updateScreen(screen: Screen) {
         this.screen = screen
         screenCallback(this.screen)
 

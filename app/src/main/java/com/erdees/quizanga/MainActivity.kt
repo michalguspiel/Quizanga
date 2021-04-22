@@ -94,7 +94,7 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun loadScreen() {
+     fun loadScreen() {
         Log.i(TAG,"Load screen casted!")
         quizangaApplication.setScreen()
         quizangaApplication.withScreenCallback { screen ->
