@@ -1,32 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginVertical="10dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/ic_google_pixel_4__4xl___3_loading">
+    android:layout_height="wrap_content">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyle"
+    <TextView
+        android:id="@+id/game_difficulty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="286dp"
+        android:layout_marginTop="8dp"
+        tools:text="Hard game"
+        android:textStyle="bold"
+        android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="250dp"
+    <LinearLayout
+        android:id="@+id/game_layout"
+        android:layout_width="match_parent"
+        android:background="@drawable/scoreboard"
+        android:paddingHorizontal="10dp"
+        android:layout_marginHorizontal="12dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Loading game..."
-        android:gravity="center"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintTop_toBottomOf="@id/game_difficulty">
+
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

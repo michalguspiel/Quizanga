@@ -14,8 +14,9 @@ class QuizangaApplication {
     private var screenCallback: (Screen) -> Unit = NoActionScreenCallback
     lateinit var game: Game
     lateinit var screen: Screen
-    val playerList: MutableList<Player> = mutableListOf()
 
+
+    var hasProblemOccurred = false
     var sessionQuestionCounter = 0
 
     fun incrementQuestionCounter() {
@@ -50,9 +51,6 @@ class QuizangaApplication {
         game = Game()
     }
 
-    fun addPlayer(player: Player) {
-        playerList.add(player)
-    }
 
     fun savePlayers(playerList: MutableList<Player>) {
         game.players = playerList
@@ -61,6 +59,7 @@ class QuizangaApplication {
 
     fun setScreen() {
         screen = when {
+            hasProblemOccurred -> LoadingScreen()
             !game.hasStarted -> WelcomeScreen()
             game.currentTurnCounter != 0 && game.players.isEmpty() -> LoadingScreen()
             game.currentTurnCounter != 0 -> GameQuestionScreen()

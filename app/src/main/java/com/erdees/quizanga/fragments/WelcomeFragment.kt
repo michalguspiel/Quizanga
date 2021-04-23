@@ -10,6 +10,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
+import com.erdees.quizanga.Utils
 
 class WelcomeFragment: Fragment() {
     lateinit var application : QuizangaApplication
@@ -21,6 +22,10 @@ class WelcomeFragment: Fragment() {
         val previousGamesButton = view.findViewById<Button>(R.id.view_welcome_previous_games_button)
         startNewGameButton.setOnClickListener {
             application.setUpGame()
+        }
+
+        previousGamesButton.setOnClickListener {
+            Utils.openFragment(GamesHistory.newInstance(),GamesHistory.TAG,parentFragmentManager)
         }
 
         return view

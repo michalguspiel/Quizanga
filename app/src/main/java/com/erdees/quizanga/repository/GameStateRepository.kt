@@ -16,6 +16,10 @@ class GameStateRepository(private val stateDao: GameStateDao) {
         stateDao.updateGame(game)
     }
 
+    suspend fun deleteGameState(game: GameState){
+        stateDao.deleteGameState(game)
+    }
+
     fun getActiveGame() = stateDao.getActiveGame()
 
     companion object {

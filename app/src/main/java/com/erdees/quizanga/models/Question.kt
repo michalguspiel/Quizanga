@@ -1,6 +1,5 @@
 package com.erdees.quizanga.models
 
-import com.google.gson.annotations.SerializedName
 
 data class Question(
     val category: String,

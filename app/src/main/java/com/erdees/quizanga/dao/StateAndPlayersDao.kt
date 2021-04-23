@@ -10,4 +10,7 @@ interface StateAndPlayersDao {
 
     @Query("SELECT * FROM GAMESTATE WHERE gameId = :gameId")
     fun getStateAndPlayersOfThisGame(gameId:Long) : LiveData<StateAndPlayers>
+
+    @Query("SELECT * FROM GAMESTATE WHERE numberOfTurnsLeft = 0 ORDER BY gameId DESC")
+    fun getStateAndPlayersHistory() : LiveData<List<StateAndPlayers>>
 }

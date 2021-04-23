@@ -13,6 +13,8 @@ class PlayerRepository(private val playerDao: PlayerDao) {
 
     fun getPlayersFromGame(gameId: Long) = playerDao.getPlayersFromGame(gameId)
 
+    suspend fun deletePlayers(playerList: List<Player>) = playerDao.deletePlayers(playerList)
+
     suspend fun updatePoints(player: Player){
         playerDao.updatePlayer(player)
 

@@ -56,18 +56,7 @@ class ResultFragment : Fragment() {
 
         button.setOnClickListener {
             restartGame()
-            application.screen = SetGameScreen()
-            application.withScreenCallback { screen ->
-                when (screen) {
-                    is SetGameScreen -> {
-                        Log.i(TAG,"screen callback casted")
-                        val fragment = SetGameFragment.newInstance()
-                        fragment.application = application
-                        openFragment(fragment,SetGameFragment.TAG,this.parentFragmentManager)
-                    }
-                }
-            }
-
+            application.setUpGame()
         }
         return view
     }

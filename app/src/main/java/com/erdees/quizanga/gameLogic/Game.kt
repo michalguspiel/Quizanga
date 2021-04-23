@@ -9,7 +9,7 @@ class Game{
     var hasStarted  = false
     var difficultLevel: LevelOfDifficult = Easy
     var playersAmount = 0
-    var players : List<Player> = listOf()
+    var players : MutableList<Player> = mutableListOf()
     var numberOfTurns = 0
     var numberOfTurnsLeft = numberOfTurns
     var gameId = 0L
@@ -22,6 +22,10 @@ class Game{
 
     fun playerWithTurn(): Player {
         return players[currentTurnCounter]
+    }
+
+    fun addPlayer(player: Player) {
+        players.add(player)
     }
 
     fun setAmountOfPlayers(number: Int) {

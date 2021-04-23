@@ -5,7 +5,11 @@ import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -23,36 +27,62 @@ class MainActivity : AppCompatActivity() {
     private val quizangaApplication by lazy {
         (application as MainApplication).quizangaApplication
     }
+    lateinit var state: GameState
 
     override fun onBackPressed() {
-        val dialog = AlertDialog.Builder(this)
-            .setPositiveButton("Exit Quizanga",null)
-            .setNegativeButton("Back",null)
-            .setNeutralButton("Restart game",null)
-            .show()
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
-        dialog.dismiss()
-            this.finish()
+        if(gamesHistoryIsVisible() == true || setGameFragmentIsVisible() == true){
+            super.onBackPressed()
+            return
         }
-        dialog.getButton(AlertDialog.BUTTON_NEUTRAL).setOnClickListener { Log.i(TAG,"this will reset game in future") } // TODO
+        val dialog = AlertDialog.Builder(this)
+            .setPositiveButton("Restart Game",null)
+            .setNeutralButton("Back",null)
+            .setNegativeButton("Exit Quizanga",null)
+            .show()
+        dialog.window?.setLayout(700, dialog.window!!.attributes.height)
+        val backButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+        val exitButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+        val restartGameButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+        exitButton.setExitButton(dialog,this)
+        restartGameButton.setRestartGameButton(dialog)
+        backButton.setBackButton(dialog)
     }
 
     private lateinit var viewModel: MainActivityViewModel
     private lateinit var frame: FrameLayout
 
 
+
+    override fun onResume() {
+        loadingFragment.application = quizangaApplication
+        Log.i(TAG,"on resume")
+        super.onResume()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        loadingFragment.application = quizangaApplication
         openFragment(loadingFragment, LoadingFragment.TAG,supportFragmentManager) //Open loading fragment while data is fetched from database.
 
         frame = findViewById(R.id.activity_main_frame)
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
+        viewModel.getDataAboutProblems().observe(this, {
+                quizangaApplication.hasProblemOccurred = it
+                setScreen()
+                loadScreen()
+        })
+
         viewModel.getActiveGameState().observe(this, { gameState ->
             Log.i(TAG,"Got another game state")
-            if (gameState != null) setApplicationGameObjectAsGameState(gameState)
-            else loadScreen()
+            if (gameState != null){
+                setApplicationGameObjectAsGameState(gameState)
+                state = gameState
+            }
+            else { setScreen()
+                loadScreen()
+            }
         })
     }
 
@@ -62,14 +92,17 @@ class MainActivity : AppCompatActivity() {
      *
      * For now it works like this, because I'm using room and liveData, basically I need refreshed [GameState] and [Player] every time I'm loading new fragment
      * I could load it manually every time question is answered but then anyways liveData has to refresh fragment because if I get it from .value it's gonna return
-     * NULL. I hate how it works but for now It will stay like this, I have no idea yet how to improve it. TODO*/
-    private fun setApplicationGamePlayersFromGameState(playerList: List<Player>) {
+     * NULL. I hate how it works but for now It will stay like this, I have no idea yet how to improve it. */
+    private fun setApplicationGamePlayersFromGameState(playerList: MutableList<Player>) {
         with(quizangaApplication.game) {
             players = playerList
             playersAmount = playerList.size
         }
         viewModel.getQuestions().observe(this,  { questions ->
-            if(questions != null) loadScreen()
+            if(questions != null){
+                setScreen()
+                loadScreen()
+            }
         })
         Log.i(TAG,"setting players from game state ")
     }
@@ -89,14 +122,15 @@ class MainActivity : AppCompatActivity() {
             }
         })
         viewModel.getPlayersFromThisGameState(gameState.gameId).observe(  this , { playerList ->
-            setApplicationGamePlayersFromGameState(playerList)
+            setApplicationGamePlayersFromGameState(playerList as MutableList<Player>)
         })
     }
 
 
-     fun loadScreen() {
+    private fun setScreen() = quizangaApplication.setScreen()
+
+     private fun loadScreen() {
         Log.i(TAG,"Load screen casted!")
-        quizangaApplication.setScreen()
         quizangaApplication.withScreenCallback { screen ->
             when (screen) {
                 is WelcomeScreen -> {
@@ -121,6 +155,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 is LoadingScreen -> {
                     val fragment = LoadingFragment.newInstance()
+                    fragment.application = quizangaApplication
                     openFragment(fragment, LoadingFragment.TAG,supportFragmentManager)
                 }
                 is ResultScreen -> {
@@ -130,6 +165,46 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun Button.setBackButton(dialog : AlertDialog){
+        val backButtonLP : LinearLayout.LayoutParams = this.layoutParams as LinearLayout.LayoutParams
+        backButtonLP.gravity = Gravity.CENTER
+        this.layoutParams = backButtonLP
+        this.setOnClickListener { dialog.dismiss() }
+    }
+
+    private fun Button.setExitButton(dialog: AlertDialog,activity: MainActivity){
+        val exitButtonLP : LinearLayout.LayoutParams = this.layoutParams as LinearLayout.LayoutParams
+        exitButtonLP.gravity = Gravity.CENTER
+        this.layoutParams = exitButtonLP
+        this.setOnClickListener {
+            dialog.dismiss()
+            activity.finish()
+        }
+    }
+    private fun Button.setRestartGameButton(dialog: AlertDialog){
+        val restartGameButtonLP: LinearLayout.LayoutParams = this.layoutParams as LinearLayout.LayoutParams
+        restartGameButtonLP.gravity = Gravity.CENTER
+        this.layoutParams = restartGameButtonLP
+        if(quizangaApplication.game.players.isEmpty()) this.visibility = View.GONE
+        this.setOnClickListener {
+            restartGame()
+            dialog.dismiss()
+        }
+    }
+    private fun gamesHistoryIsVisible():Boolean?{
+        return supportFragmentManager.findFragmentByTag("GamesHistory")?.isVisible
+    }
+
+    private fun setGameFragmentIsVisible() : Boolean? {
+        return supportFragmentManager.findFragmentByTag("SetGameFragment")?.isVisible
+    }
+
+    private fun restartGame(){
+        viewModel.deleteGameState(state)
+        quizangaApplication.restartGame()
+        viewModel.deletePlayers(quizangaApplication.game.players)
     }
 
     companion object {

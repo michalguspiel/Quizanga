@@ -11,6 +11,9 @@ class BasicDao {
     private var questions : Questions? = null
     private val questionsLive = MutableLiveData<Questions?>()
 
+    private var isThereProblemWithQuestions = false
+    private val isThereProblemWithQuestionsLive = MutableLiveData<Boolean>()
+
     private var amountOfPlayers = 0
     private val amountOfPlayersLive = MutableLiveData<Int>()
 
@@ -25,7 +28,16 @@ class BasicDao {
         amountOfGameTurnsLive.value = amountOfGameTurns
         difficultLevelLive.value = difficultLevel
         questionsLive.value = questions
+        isThereProblemWithQuestionsLive.value = isThereProblemWithQuestions
     }
+
+    fun setDataAboutProblems(hasProblemOccurred: Boolean){
+        Log.i("Basic dao", "setting problem $hasProblemOccurred")
+        isThereProblemWithQuestions = hasProblemOccurred
+        isThereProblemWithQuestionsLive.value = isThereProblemWithQuestions
+    }
+
+    fun getDataAboutProblemWithConnectionOrQuestions() = isThereProblemWithQuestionsLive as LiveData<Boolean>
 
     fun setQuestions(questionsToSet: Questions){
         questions = questionsToSet

@@ -16,5 +16,8 @@ interface GameStateDao {
     @Update
     suspend fun updateGame(game:GameState)
 
+    @Delete
+    suspend fun deleteGameState(game: GameState)
+
 
 }

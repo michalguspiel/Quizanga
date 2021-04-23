@@ -21,10 +21,10 @@ import com.erdees.quizanga.viewModels.GameScoreboardFragmentViewModel
 class GameScoreboardFragment: Fragment() {
 
     lateinit var application: QuizangaApplication
-    lateinit var scoreBoardLayout : LinearLayout
-    lateinit var viewModel : GameScoreboardFragmentViewModel
-    lateinit var button : Button
-    lateinit var roundsLeftTV : TextView
+    private lateinit var scoreBoardLayout : LinearLayout
+    private lateinit var viewModel : GameScoreboardFragmentViewModel
+    private lateinit var button : Button
+    private lateinit var roundsLeftTV : TextView
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,7 +37,7 @@ class GameScoreboardFragment: Fragment() {
         roundsLeftTV = view.findViewById(R.id.game_scoreboard_rounds_left)
         viewModel.getPlayersForThisGame(application.game.gameId).observe(viewLifecycleOwner, {
                 setScoreboard(it)
-            application.game.players = it
+            application.game.players = it as MutableList<Player>
             })
         roundsLeftTV.text =  roundsLeft()
 

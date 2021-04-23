@@ -72,10 +72,10 @@ class QuizangaApplicationUnitTests {
     private fun setUpTestGame(){
         quizangaApplication.open()
         quizangaApplication.setUpGame()
-        quizangaApplication.addPlayer(michal)
-        quizangaApplication.addPlayer(moona)
-        quizangaApplication.addPlayer(random)
-        quizangaApplication.savePlayers(quizangaApplication.playerList)
+        quizangaApplication.game.addPlayer(michal)
+        quizangaApplication.game.addPlayer(moona)
+        quizangaApplication.game.addPlayer(random)
+        quizangaApplication.savePlayers(quizangaApplication.game.players)
         quizangaApplication.game.setAmountOfGameTurns(10)
 
     }
@@ -225,12 +225,12 @@ class QuizangaApplicationUnitTests {
         quizangaApplication.setUpGame()
         val michal = Player(0,name="Michal",points = 999)
         val kevin = Player(0,name="Kevin",points = 100)
-        quizangaApplication.addPlayer(michal)
-        quizangaApplication.addPlayer(Player(0,name="Moona",points = 150))
-        quizangaApplication.addPlayer(Player(0,name="Silver",points = 300))
-        quizangaApplication.addPlayer(Player(0,name="Jackson",points = 300))
-        quizangaApplication.addPlayer(kevin)
-        quizangaApplication.savePlayers(quizangaApplication.playerList)
+        quizangaApplication.game.addPlayer(michal)
+        quizangaApplication.game.addPlayer(Player(0,name="Moona",points = 150))
+        quizangaApplication.game.addPlayer(Player(0,name="Silver",points = 300))
+        quizangaApplication.game.addPlayer(Player(0,name="Jackson",points = 300))
+        quizangaApplication.game.addPlayer(kevin)
+        quizangaApplication.savePlayers(quizangaApplication.game.players)
         quizangaApplication.game.setAmountOfGameTurns(10)
         quizangaApplication.startGame()
 
@@ -253,9 +253,18 @@ class QuizangaApplicationUnitTests {
         }
         quizangaApplication.restartGame()
         assertEquals(false,quizangaApplication.game.hasStarted)
-
     }
 
+    @Test
+    fun `Given problem has occurred screen should be loadingScreen`(){
+        setUpTestGame()
+        quizangaApplication.hasProblemOccurred = true
+        quizangaApplication.setScreen()
+        quizangaApplication.withScreenCallback { screen ->
+            assertEquals(true,screen is LoadingScreen)
+        }
+    }
+    
 
     }
 

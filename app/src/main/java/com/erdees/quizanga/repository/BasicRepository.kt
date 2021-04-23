@@ -23,6 +23,8 @@ class BasicRepository(val dao: BasicDao) {
 
     fun getQuestions() = dao.getQuestion()
 
+    fun getDataAboutProblemsWithConnectionOrQuestions() = dao.getDataAboutProblemWithConnectionOrQuestions()
+
     fun setQuestionsOrAddIfLiveDataAlreadyExists(difficult: LevelOfDifficult){
         val currentQuestionsLiveData = dao.getQuestion()
         val question = questionRepository.getQuestion(difficult)
@@ -33,10 +35,13 @@ class BasicRepository(val dao: BasicDao) {
                     val result = response.body()!!
                     if(currentQuestionsLiveData.value == null)dao.setQuestions(result)
                     else dao.addQuestions(result)
+                    dao.setDataAboutProblems(hasProblemOccurred = false)
                 }
             }
             override fun onFailure(call: Call<Questions>, t: Throwable) {
                 Log.i("QUESTION", "Failed ${t.message}")
+                dao.setDataAboutProblems(hasProblemOccurred = true)
+
             }
         })
     }

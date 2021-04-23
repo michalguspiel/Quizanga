@@ -139,7 +139,6 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private fun startNewGame(){
         application.game.players = playerList
         createNewGameStateInDatabase(application.game)
-      //  application.updateScreen(application.screen) TODO
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){
