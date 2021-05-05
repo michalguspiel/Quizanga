@@ -41,7 +41,6 @@ class BasicRepository(val dao: BasicDao) {
             override fun onFailure(call: Call<Questions>, t: Throwable) {
                 Log.i("QUESTION", "Failed ${t.message}")
                 dao.setDataAboutProblems(hasProblemOccurred = true)
-
             }
         })
     }

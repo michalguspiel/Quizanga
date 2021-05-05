@@ -32,4 +32,8 @@ class SetGameFragmentViewModel : ViewModel() {
     }
 
     fun getDifficultLevel() = basicRepository.getDifficultLevel()
+
+    fun addMoreQuestions(difficult: LevelOfDifficult) = basicRepository.setQuestionsOrAddIfLiveDataAlreadyExists(difficult)
+
+    fun getQuestions() = basicRepository.getQuestions()
 }

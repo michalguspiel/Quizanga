@@ -1,18 +1,13 @@
 package com.erdees.quizanga
 
-import android.app.ActionBar
 import android.content.Context
 import android.media.MediaPlayer
-import android.text.Layout
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.RelativeLayout
 import androidx.core.view.setMargins
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import com.erdees.quizanga.Utils.addMargin
 import com.erdees.quizanga.models.Player
 
 object Utils {
@@ -26,7 +21,6 @@ object Utils {
             ft.addToBackStack(backStateName)
             ft.commit()
     }
-
      fun appWillSoonRunOutOfQuestions(numberOfQuestions: Int, sessionQuestionCounter : Int): Boolean {
         return (numberOfQuestions <= sessionQuestionCounter + 2)
     }
@@ -49,5 +43,6 @@ object Utils {
     fun List<Player>.sortByPoints(): List<Player>{
         return this.sortedBy { it.points }.reversed()
     }
+
 
 }

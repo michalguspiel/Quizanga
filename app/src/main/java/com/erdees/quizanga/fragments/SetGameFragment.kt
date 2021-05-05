@@ -14,12 +14,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.gameLogic.Game
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
+import com.erdees.quizanga.Utils
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Easy
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
 import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Medium
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
+import com.erdees.quizanga.screens.GameQuestionScreen
 import com.erdees.quizanga.viewModels.SetGameFragmentAndroidViewModel
 import com.erdees.quizanga.viewModels.SetGameFragmentViewModel
 
@@ -139,6 +141,21 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private fun startNewGame(){
         application.game.players = playerList
         createNewGameStateInDatabase(application.game)
+       // viewModel.addMoreQuestions(application.game.difficultLevel)
+        viewModel.getQuestions().observe(viewLifecycleOwner,{
+            if(it == null) viewModel.addMoreQuestions(application.game.difficultLevel)
+            if(it != null ){
+                application.screen = GameQuestionScreen()
+                if(application.screen is GameQuestionScreen) openGameQuestionFragment()
+                else throw Exception("Error wrong screen!!!")
+            }
+        })
+    }
+
+    private fun openGameQuestionFragment(){
+        val gameQuestionFragment = GameQuestionFragment.newInstance()
+        gameQuestionFragment.application = application
+        Utils.openFragment(gameQuestionFragment,GameQuestionFragment.TAG,parentFragmentManager)
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){

@@ -21,6 +21,7 @@ import com.erdees.quizanga.viewModels.ResultFragmentViewModel
 
 class ResultFragment : Fragment() {
 
+    val setGameFragment = SetGameFragment.newInstance()
     lateinit var application: QuizangaApplication
     lateinit var third : TextView
     lateinit var winner : Player
@@ -49,16 +50,18 @@ class ResultFragment : Fragment() {
         })
 
 
-
-
-
         playSound(R.raw.game_ended,this.requireContext())
 
         button.setOnClickListener {
             restartGame()
-            application.setUpGame()
+            openSetGameFragment()
         }
         return view
+    }
+
+    private fun openSetGameFragment(){
+        setGameFragment.application = application
+        openFragment(setGameFragment,SetGameFragment.TAG,parentFragmentManager)
     }
 
     private fun showThird(list : List<Player>){

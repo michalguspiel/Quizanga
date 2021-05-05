@@ -21,10 +21,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils.addMargin
 import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
+import com.erdees.quizanga.Utils.openFragment
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.models.Question
+import com.erdees.quizanga.screens.GameQuestionScreen
+import com.erdees.quizanga.screens.GameScoreboardScreen
+import com.erdees.quizanga.screens.ResultScreen
 import com.erdees.quizanga.viewModels.GameQuestionFragmentViewModel
 import kotlin.random.Random
 
@@ -76,12 +80,9 @@ class GameQuestionFragment : Fragment() {
             else setAnswers()
             Log.i(TAG, thisQuestion.correct_answer)
         })
+        playerWithTurn = application.game.players[application.game.currentTurnCounter]
+        playerNameTextView.text = "Question for " + playerWithTurn.name
 
-        viewModel.getPlayersForThisGame(application.game.gameId).observe(viewLifecycleOwner,
-             {
-                playerWithTurn = it[application.game.currentTurnCounter]
-                playerNameTextView.text = "Question for " + playerWithTurn.name
-            })
 
         return view
     }
@@ -238,7 +239,9 @@ class GameQuestionFragment : Fragment() {
         viewModel.updatePoints(player)
         application.incrementQuestionCounter()
         updateGameState()
+        application.setScreen()
         Log.i(TAG, "Answered correctly!")
+        openCorrectFragment()
     }
 
     private fun answeredWrongly(player: Player) {
@@ -246,7 +249,9 @@ class GameQuestionFragment : Fragment() {
         viewModel.updatePoints(player)
         application.incrementQuestionCounter()
         updateGameState()
+        application.setScreen()
         Log.i(TAG, "Answered wrongly!")
+        openCorrectFragment()
     }
 
     private fun setColorAnimation(animation : ObjectAnimator){
@@ -283,6 +288,27 @@ class GameQuestionFragment : Fragment() {
     private fun List<Button>.blockAllButtons() {
         this.forEach {
             it.isClickable = false
+        }
+    }
+
+    private fun openCorrectFragment(){
+        when(application.screen){
+            is GameQuestionScreen  -> {
+                val fragment = newInstance()
+                fragment.application = application
+                openFragment(fragment,TAG,parentFragmentManager)
+            }
+            is GameScoreboardScreen ->  {
+                val fragment = GameScoreboardFragment.newInstance()
+                fragment.application = application
+                openFragment(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
+            }
+            is ResultScreen ->   {
+                val fragment = ResultFragment.newInstance()
+                fragment.application = application
+                openFragment(fragment,ResultFragment.TAG,parentFragmentManager)
+            }
+            else -> throw Exception("ERrrrrrr...!")
         }
     }
 

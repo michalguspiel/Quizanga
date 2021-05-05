@@ -71,16 +71,16 @@ class MainActivity : AppCompatActivity() {
         viewModel.getDataAboutProblems().observe(this, {
                 quizangaApplication.hasProblemOccurred = it
                 setScreen()
-                loadScreen()
+                 Log.i(TAG,quizangaApplication.screen.toString())
+                    loadScreen()
         })
 
         viewModel.getActiveGameState().observe(this, { gameState ->
-            Log.i(TAG,"Got another game state")
             if (gameState != null){
                 setApplicationGameObjectAsGameState(gameState)
                 state = gameState
             }
-            else { setScreen()
+            else { //setScreen()
                 loadScreen()
             }
         })
@@ -98,13 +98,6 @@ class MainActivity : AppCompatActivity() {
             players = playerList
             playersAmount = playerList.size
         }
-        viewModel.getQuestions().observe(this,  { questions ->
-            if(questions != null){
-                setScreen()
-                loadScreen()
-            }
-        })
-        Log.i(TAG,"setting players from game state ")
     }
 
     private fun setApplicationGameObjectAsGameState(gameState: GameState) {
@@ -117,7 +110,7 @@ class MainActivity : AppCompatActivity() {
             currentTurnCounter = gameState.roundCounter
         }
         viewModel.getQuestions().observe(this,{ allQuestions ->
-            if(allQuestions == null){Log.i(TAG,"questions tried to be added")
+            if(allQuestions == null){
                 viewModel.addQuestions(quizangaApplication.game.difficultLevel)
             }
         })
@@ -127,12 +120,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun setScreen() = quizangaApplication.setScreen()
-
+     private fun setScreen() = quizangaApplication.setScreen()
      private fun loadScreen() {
         Log.i(TAG,"Load screen casted!")
-        quizangaApplication.withScreenCallback { screen ->
-            when (screen) {
+            when (quizangaApplication.screen) {
                 is WelcomeScreen -> {
                     val fragment = WelcomeFragment.newInstance()
                     fragment.application = quizangaApplication
@@ -163,7 +154,6 @@ class MainActivity : AppCompatActivity() {
                     fragment.application = quizangaApplication
                     openFragment(fragment, ResultFragment.TAG,supportFragmentManager)
                 }
-            }
         }
     }
 
@@ -202,9 +192,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun restartGame(){
+        Log.i(TAG, quizangaApplication.game.hasStarted.toString())
         viewModel.deleteGameState(state)
-        quizangaApplication.restartGame()
         viewModel.deletePlayers(quizangaApplication.game.players)
+        quizangaApplication.restartGame()
+        Log.i(TAG, quizangaApplication.game.hasStarted.toString())
+        loadScreen()
     }
 
     companion object {

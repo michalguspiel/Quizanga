@@ -21,6 +21,7 @@ class QuizangaApplication {
 
     fun incrementQuestionCounter() {
         sessionQuestionCounter++
+        this.screenCallback(screen)
     }
 
     fun setUpGame() {
@@ -41,10 +42,14 @@ class QuizangaApplication {
             game.hasEnded = true
             screen = ResultScreen()
         } else screen = GameQuestionScreen()
+
+        this.screenCallback(screen)
     }
 
     fun restartGame() {
         game = Game()
+        setScreen()
+        this.screenCallback(screen)
     }
 
     fun open() {
@@ -66,10 +71,13 @@ class QuizangaApplication {
             game.hasEnded -> ResultScreen()
             else -> GameScoreboardScreen(game)
         }
+        //updateScreen(screen)
+
     }
 
 
     fun withScreenCallback(callback: (Screen) -> Unit) {
+        Log.i("TEST", "with screen callback casted!")
         this.screenCallback = callback
         updateScreen(screen)
     }

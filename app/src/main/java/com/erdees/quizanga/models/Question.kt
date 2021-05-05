@@ -12,7 +12,3 @@ data class Question(
 {
 }
 
-class Questions(
-    var results: List<Question>,
-    val response_code: Int
-)
