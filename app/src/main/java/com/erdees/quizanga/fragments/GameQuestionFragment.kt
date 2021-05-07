@@ -23,6 +23,7 @@ import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils.addMargin
 import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
 import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
+import com.erdees.quizanga.Utils.testOpenFragment
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
@@ -63,6 +64,9 @@ class GameQuestionFragment : Fragment() {
         val categoryTV = view.findViewById<TextView>(R.id.game_question_category)
         answersLayout = view.findViewById(R.id.game_question_answers_layout)
 
+        Log.i(TAG,application.toString())
+        Log.i(TAG,application.game.toString())
+
         green = ContextCompat.getColor(requireContext(),R.color.green_500)
         setButtonIdsAndIncorrectButtonIdList()
         alphabet = mutableListOf("A", "B", "C", "D")
@@ -86,6 +90,8 @@ class GameQuestionFragment : Fragment() {
             Log.i(TAG, thisQuestion.correct_answer)
         })
         playerWithTurn = application.game.players[application.game.currentTurnCounter]
+        Log.i(TAG,application.game.players.toList().toString())
+        Log.i(TAG,playerWithTurn.name)
         playerNameTextView.text = "Question for " + playerWithTurn.name
 
 
@@ -239,8 +245,11 @@ class GameQuestionFragment : Fragment() {
         viewModel.updateGameState(updatedGameState)
     }
 
+
     private fun answeredCorrectly(player: Player) {
+        Log.i(TAG,player.name + " CORRRRRECT")
         application.game.correctAnswer(player)
+        Log.i(TAG, player.points.toString() + "POINTS CHECK")
         viewModel.updatePoints(player)
         application.incrementQuestionCounter()
         updateGameState()
@@ -249,6 +258,7 @@ class GameQuestionFragment : Fragment() {
     }
 
     private fun answeredWrongly(player: Player) {
+        Log.i(TAG,player.name + " WRROOOOONG")
         application.game.wrongAnswer(player)
         viewModel.updatePoints(player)
         application.incrementQuestionCounter()
@@ -299,17 +309,17 @@ class GameQuestionFragment : Fragment() {
             is GameQuestionScreen  -> {
                 val fragment = newInstance()
                 fragment.application = application
-                openFragmentWithoutBackStack(fragment,TAG,parentFragmentManager)
+                testOpenFragment(fragment,TAG,parentFragmentManager)
             }
             is GameScoreboardScreen ->  {
                 val fragment = GameScoreboardFragment.newInstance()
                 fragment.application = application
-                openFragmentWithoutBackStack(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
+                testOpenFragment(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
             }
             is ResultScreen ->   {
                 val fragment = ResultFragment.newInstance()
                 fragment.application = application
-                openFragmentWithoutBackStack(fragment,ResultFragment.TAG,parentFragmentManager)
+                testOpenFragment(fragment,ResultFragment.TAG,parentFragmentManager)
             }
             else -> throw Exception("ERrrrrrr...!")
         }

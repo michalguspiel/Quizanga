@@ -12,13 +12,13 @@ import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
 import com.erdees.quizanga.Utils.playSound
 import com.erdees.quizanga.Utils.sortByPoints
+import com.erdees.quizanga.Utils.testOpenFragment
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.Player
 
 
 class ResultFragment : Fragment() {
 
-    private val setGameFragment = SetGameFragment.newInstance()
     lateinit var application: QuizangaApplication
     private lateinit var third : TextView
     private lateinit var winner : Player
@@ -45,8 +45,6 @@ class ResultFragment : Fragment() {
             first.text = "${winner.name} with ${winner.points} points."
             second.text = "2nd. ${secondPlace.name} with ${secondPlace.points} points."
 
-
-
         playSound(R.raw.game_ended, this.requireContext())
 
         button.setOnClickListener {
@@ -57,8 +55,9 @@ class ResultFragment : Fragment() {
     }
 
     private fun openSetGameFragment(){
+        val setGameFragment = SetGameFragment.newInstance()
         setGameFragment.application = application
-        openFragmentWithoutBackStack(setGameFragment,SetGameFragment.TAG,parentFragmentManager)
+        testOpenFragment(setGameFragment,SetGameFragment.TAG,parentFragmentManager)
     }
 
     @SuppressLint("SetTextI18n")

@@ -41,9 +41,6 @@ class GameQuestionFragmentViewModel(application: Application) : AndroidViewModel
         }
     }
 
-    fun getPlayersForThisGame(gameId: Long) = playerRepository.getPlayersFromGame(gameId)
-
-
 
     fun getQuestions() = basicRepository.getQuestions()
 

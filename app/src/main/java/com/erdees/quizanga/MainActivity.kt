@@ -18,6 +18,8 @@ import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.screens.*
 import com.erdees.quizanga.viewModels.MainActivityViewModel
 
+/**TODO CHANGE ARCHITECTURE OF THIS , CALLS FROM VIEWMODELS LIVE DATA ARE CHANGING APPLICATION GAME OBJECT STATE WHICH CAUSES BUGS
+ * AT LEAST THATS WHAT I THINK FOR NOW */
 class MainActivity : AppCompatActivity() {
 
     private val loadingFragment = LoadingFragment.newInstance()

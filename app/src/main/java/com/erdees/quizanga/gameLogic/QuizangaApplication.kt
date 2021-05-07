@@ -21,12 +21,10 @@ class QuizangaApplication {
 
     fun incrementQuestionCounter() {
         sessionQuestionCounter++
-        this.screenCallback(screen)
     }
 
     fun setUpGame() {
         screen = SetGameScreen()
-        this.screenCallback(screen)
     }
 
 
@@ -48,8 +46,7 @@ class QuizangaApplication {
 
     fun restartGame() {
         game = Game()
-        setScreen()
-        this.screenCallback(screen)
+        screen = SetGameScreen()
     }
 
     fun open() {
