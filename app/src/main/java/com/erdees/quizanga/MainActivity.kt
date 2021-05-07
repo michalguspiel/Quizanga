@@ -1,20 +1,17 @@
 package com.erdees.quizanga
 
 import android.app.AlertDialog
-import android.app.Dialog
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.widget.Button
-import android.widget.FrameLayout
 import android.widget.LinearLayout
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
+import com.erdees.quizanga.Utils.ignoreFirst
 import com.erdees.quizanga.Utils.openFragment
+import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
 import com.erdees.quizanga.fragments.*
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
@@ -30,32 +27,37 @@ class MainActivity : AppCompatActivity() {
     lateinit var state: GameState
 
     override fun onBackPressed() {
-        if(gamesHistoryIsVisible() == true || setGameFragmentIsVisible() == true){
+        Log.i(TAG, "on back ${supportFragmentManager.backStackEntryCount}    ${setGameFragmentIsVisible()}")
+        if (setGameFragmentIsVisible() == true && supportFragmentManager.backStackEntryCount == 1) {
+            Log.i(TAG,"CASTED½! BACK !!")
+            val fragment = WelcomeFragment.newInstance()
+            fragment.application = quizangaApplication
+            openFragmentWithoutBackStack(fragment, WelcomeFragment.TAG,supportFragmentManager)
+        }
+        else if (gamesHistoryIsVisible() == true || setGameFragmentIsVisible() == true) {
             super.onBackPressed()
             return
         }
-        val dialog = AlertDialog.Builder(this)
-            .setPositiveButton("Restart Game",null)
-            .setNeutralButton("Back",null)
-            .setNegativeButton("Exit Quizanga",null)
-            .show()
-        dialog.window?.setLayout(700, dialog.window!!.attributes.height)
-        val backButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
-        val exitButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
-        val restartGameButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
-        exitButton.setExitButton(dialog,this)
-        restartGameButton.setRestartGameButton(dialog)
-        backButton.setBackButton(dialog)
+        else {
+            val dialog = AlertDialog.Builder(this)
+                .setPositiveButton("Restart Game", null)
+                .setNeutralButton("Back", null)
+                .setNegativeButton("Exit Quizanga", null)
+                .show()
+            dialog.window?.setLayout(700, dialog.window!!.attributes.height)
+            val backButton = dialog.getButton(AlertDialog.BUTTON_NEUTRAL)
+            val exitButton = dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            val restartGameButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            exitButton.setExitButton(dialog, this)
+            restartGameButton.setRestartGameButton(dialog)
+            backButton.setBackButton(dialog)
+        }
     }
 
     private lateinit var viewModel: MainActivityViewModel
-    private lateinit var frame: FrameLayout
-
-
 
     override fun onResume() {
         loadingFragment.application = quizangaApplication
-        Log.i(TAG,"on resume")
         super.onResume()
     }
 
@@ -64,35 +66,27 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         loadingFragment.application = quizangaApplication
         openFragment(loadingFragment, LoadingFragment.TAG,supportFragmentManager) //Open loading fragment while data is fetched from database.
-
-        frame = findViewById(R.id.activity_main_frame)
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
-        viewModel.getDataAboutProblems().observe(this, {
+        viewModel.getDataAboutProblems().ignoreFirst().observe(this, {
                 quizangaApplication.hasProblemOccurred = it
                 setScreen()
-                 Log.i(TAG,quizangaApplication.screen.toString())
-                    loadScreen()
-        })
+                loadScreen()
+            })
 
         viewModel.getActiveGameState().observe(this, { gameState ->
             if (gameState != null){
                 setApplicationGameObjectAsGameState(gameState)
                 state = gameState
             }
-            else { //setScreen()
+            else {
+                setScreen()
                 loadScreen()
             }
         })
     }
 
-    /**Setting players in Game object accordingly to active game state
-     * function load screen is inside getQuestions().observe because otherwise function loadScreen is called before questions are downlaoded.
-     * Function load screen is in here because Screen needs to be refreshed every time any player gets updated.
-     *
-     * For now it works like this, because I'm using room and liveData, basically I need refreshed [GameState] and [Player] every time I'm loading new fragment
-     * I could load it manually every time question is answered but then anyways liveData has to refresh fragment because if I get it from .value it's gonna return
-     * NULL. I hate how it works but for now It will stay like this, I have no idea yet how to improve it. */
+
     private fun setApplicationGamePlayersFromGameState(playerList: MutableList<Player>) {
         with(quizangaApplication.game) {
             players = playerList
@@ -101,7 +95,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setApplicationGameObjectAsGameState(gameState: GameState) {
-        Log.i(TAG,"Game found" + quizangaApplication.game.players.size)
         with(quizangaApplication.game) {
             gameId = gameState.gameId
             hasStarted = true
@@ -127,22 +120,22 @@ class MainActivity : AppCompatActivity() {
                 is WelcomeScreen -> {
                     val fragment = WelcomeFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragment(fragment, WelcomeFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutBackStack(fragment, WelcomeFragment.TAG,supportFragmentManager)
                 }
                 is SetGameScreen -> {
                     val fragment = SetGameFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragment(fragment, SetGameFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutBackStack(fragment, SetGameFragment.TAG,supportFragmentManager)
                 }
                 is GameScoreboardScreen -> {
                     val fragment = GameScoreboardFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragment(fragment, GameScoreboardFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutBackStack(fragment, GameScoreboardFragment.TAG,supportFragmentManager)
                 }
                 is GameQuestionScreen -> {
                     val fragment = GameQuestionFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragment(fragment, GameQuestionFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutBackStack(fragment, GameQuestionFragment.TAG,supportFragmentManager)
                 }
                 is LoadingScreen -> {
                     val fragment = LoadingFragment.newInstance()
@@ -152,7 +145,7 @@ class MainActivity : AppCompatActivity() {
                 is ResultScreen -> {
                     val fragment = ResultFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragment(fragment, ResultFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutBackStack(fragment, ResultFragment.TAG,supportFragmentManager)
                 }
         }
     }

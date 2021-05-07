@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
+import com.erdees.quizanga.Utils
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.viewModels.LoadingFragmentViewModel
 

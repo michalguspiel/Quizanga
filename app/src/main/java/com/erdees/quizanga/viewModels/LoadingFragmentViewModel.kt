@@ -8,11 +8,12 @@ import com.erdees.quizanga.repository.BasicRepository
 
 class LoadingFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
-    val basicRepository : BasicRepository
+    private val basicRepository : BasicRepository
     init {
         val basicDao = BasicDatabase.getInstance().basicDao
         basicRepository = BasicRepository(basicDao)
     }
 
     fun addQuestions(difficult: LevelOfDifficult) = basicRepository.setQuestionsOrAddIfLiveDataAlreadyExists(difficult)
+
 }

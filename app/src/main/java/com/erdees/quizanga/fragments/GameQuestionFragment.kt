@@ -3,6 +3,7 @@ package com.erdees.quizanga.fragments
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.Html
@@ -21,7 +22,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils.addMargin
 import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
-import com.erdees.quizanga.Utils.openFragment
+import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
@@ -46,8 +47,11 @@ class GameQuestionFragment : Fragment() {
     private var ID_OF_BUTTON_WITH_INCORRECT_ANSWER_3: Int = 0
     private lateinit var listOfIncorrectButtonIds: List<Int>
     private lateinit var alphabet: MutableList<String>
-    private val red = 0xFFFF0000
 
+    private val red = 0xFFFF0000
+    private var green = 0
+
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,6 +63,7 @@ class GameQuestionFragment : Fragment() {
         val categoryTV = view.findViewById<TextView>(R.id.game_question_category)
         answersLayout = view.findViewById(R.id.game_question_answers_layout)
 
+        green = ContextCompat.getColor(requireContext(),R.color.green_500)
         setButtonIdsAndIncorrectButtonIdList()
         alphabet = mutableListOf("A", "B", "C", "D")
 
@@ -194,7 +199,7 @@ class GameQuestionFragment : Fragment() {
         setColorAnimation(colorAnimation)
         setAnimation(blinkingAnim)
         val correctButton = view?.findViewById<Button>(ID_OF_BUTTON_WITH_CORRECT_ANSWER)
-        correctButton!!.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.green_500))
+        correctButton!!.setBackgroundColor(green)
         colorAnimation.start()
         correctButton.startAnimation(blinkingAnim)
     }
@@ -202,7 +207,7 @@ class GameQuestionFragment : Fragment() {
 
     private fun lightCorrectAnswer(button: Button) {
         playSound(true)
-        button.setBackgroundColor(resources.getColor(R.color.green_500))
+        button.setBackgroundColor(green)
         val anim: Animation = AlphaAnimation(1.0f, 0.2f)
         setAnimation(anim)
         anim.setAnimationListener(object : Animation.AnimationListener {
@@ -240,7 +245,6 @@ class GameQuestionFragment : Fragment() {
         application.incrementQuestionCounter()
         updateGameState()
         application.setScreen()
-        Log.i(TAG, "Answered correctly!")
         openCorrectFragment()
     }
 
@@ -250,7 +254,6 @@ class GameQuestionFragment : Fragment() {
         application.incrementQuestionCounter()
         updateGameState()
         application.setScreen()
-        Log.i(TAG, "Answered wrongly!")
         openCorrectFragment()
     }
 
@@ -296,17 +299,17 @@ class GameQuestionFragment : Fragment() {
             is GameQuestionScreen  -> {
                 val fragment = newInstance()
                 fragment.application = application
-                openFragment(fragment,TAG,parentFragmentManager)
+                openFragmentWithoutBackStack(fragment,TAG,parentFragmentManager)
             }
             is GameScoreboardScreen ->  {
                 val fragment = GameScoreboardFragment.newInstance()
                 fragment.application = application
-                openFragment(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
+                openFragmentWithoutBackStack(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
             }
             is ResultScreen ->   {
                 val fragment = ResultFragment.newInstance()
                 fragment.application = application
-                openFragment(fragment,ResultFragment.TAG,parentFragmentManager)
+                openFragmentWithoutBackStack(fragment,ResultFragment.TAG,parentFragmentManager)
             }
             else -> throw Exception("ERrrrrrr...!")
         }

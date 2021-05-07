@@ -71,13 +71,10 @@ class QuizangaApplication {
             game.hasEnded -> ResultScreen()
             else -> GameScoreboardScreen(game)
         }
-        //updateScreen(screen)
-
     }
 
 
     fun withScreenCallback(callback: (Screen) -> Unit) {
-        Log.i("TEST", "with screen callback casted!")
         this.screenCallback = callback
         updateScreen(screen)
     }

@@ -141,7 +141,6 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private fun startNewGame(){
         application.game.players = playerList
         createNewGameStateInDatabase(application.game)
-       // viewModel.addMoreQuestions(application.game.difficultLevel)
         viewModel.getQuestions().observe(viewLifecycleOwner,{
             if(it == null) viewModel.addMoreQuestions(application.game.difficultLevel)
             if(it != null ){
@@ -155,7 +154,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private fun openGameQuestionFragment(){
         val gameQuestionFragment = GameQuestionFragment.newInstance()
         gameQuestionFragment.application = application
-        Utils.openFragment(gameQuestionFragment,GameQuestionFragment.TAG,parentFragmentManager)
+        Utils.openFragmentWithoutBackStack(gameQuestionFragment,GameQuestionFragment.TAG,parentFragmentManager)
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){
