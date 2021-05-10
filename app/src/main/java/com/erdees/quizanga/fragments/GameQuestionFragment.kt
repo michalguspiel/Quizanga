@@ -321,8 +321,11 @@ class GameQuestionFragment : Fragment() {
                 fragment.application = application
                 testOpenFragment(fragment,ResultFragment.TAG,parentFragmentManager)
             }
-            else -> throw Exception("ERrrrrrr...!")
-        }
+            else -> {
+        Log.i(TAG,application.screen.toString())
+                throw Exception("ERrrrrrr...!")
+            }
+            }
     }
 
     private fun randomizePositionOfCorrectAnswer(): Int {

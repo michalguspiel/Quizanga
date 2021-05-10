@@ -141,6 +141,15 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     private fun startNewGame(){
         application.game.players = playerList
         createNewGameStateInDatabase(application.game)
+        viewModel.getActiveGameState().observe(viewLifecycleOwner, { gameState ->
+            if (gameState != null) {
+                setNewGame(gameState)
+                viewModel.getPlayersFromThisGameState(gameState.gameId)
+                    .observe(viewLifecycleOwner, { playerList ->
+                        setApplicationGamePlayersFromGameState(playerList as MutableList<Player>)
+                    })
+            }})
+
         viewModel.getQuestions().observe(viewLifecycleOwner,{
             if(it == null) viewModel.addMoreQuestions(application.game.difficultLevel)
             if(it != null ){
@@ -149,6 +158,23 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
                 else throw Exception("Error wrong screen!!!")
             }
         })
+    }
+
+    private fun setApplicationGamePlayersFromGameState(playerList: MutableList<Player>) {
+        with(application.game) {
+            players = playerList
+            playersAmount = playerList.size
+        }
+    }
+
+    private fun setNewGame(gameState: GameState){
+        with(application.game) {
+            gameId = gameState.gameId
+            hasStarted = true
+            difficultLevel = gameState.difficultyLevel
+            numberOfTurnsLeft = gameState.numberOfTurnsLeft
+            currentTurnCounter = gameState.roundCounter
+        }
     }
 
     private fun openGameQuestionFragment(){

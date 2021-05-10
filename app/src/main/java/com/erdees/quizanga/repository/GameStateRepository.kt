@@ -1,15 +1,12 @@
 package com.erdees.quizanga.repository
 
-import android.util.Log
-import com.erdees.quizanga.dao.BasicDao
 import com.erdees.quizanga.dao.GameStateDao
 import com.erdees.quizanga.models.GameState
 
 class GameStateRepository(private val stateDao: GameStateDao) {
 
      suspend fun startGame(game: GameState): Long  {
-        val gameID = stateDao.startGame(game)
-        return gameID
+         return stateDao.startGame(game)
     }
 
     suspend fun updateGame(game:GameState){

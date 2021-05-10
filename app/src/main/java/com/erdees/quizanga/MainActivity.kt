@@ -19,7 +19,7 @@ import com.erdees.quizanga.screens.*
 import com.erdees.quizanga.viewModels.MainActivityViewModel
 
 /**TODO CHANGE ARCHITECTURE OF THIS , CALLS FROM VIEWMODELS LIVE DATA ARE CHANGING APPLICATION GAME OBJECT STATE WHICH CAUSES BUGS
- * AT LEAST THATS WHAT I THINK FOR NOW */
+ * AT LEAST THAT'S WHAT I THINK FOR NOW */
 class MainActivity : AppCompatActivity() {
 
     private val loadingFragment = LoadingFragment.newInstance()
@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity() {
     override fun onBackPressed() {
         Log.i(TAG, "on back ${supportFragmentManager.backStackEntryCount}    ${setGameFragmentIsVisible()}")
         if (setGameFragmentIsVisible() == true && supportFragmentManager.backStackEntryCount == 1) {
-            Log.i(TAG,"CASTED½! BACK !!")
             val fragment = WelcomeFragment.newInstance()
             fragment.application = quizangaApplication
             openFragmentWithoutBackStack(fragment, WelcomeFragment.TAG,supportFragmentManager)
@@ -67,51 +66,22 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         loadingFragment.application = quizangaApplication
-        openFragment(loadingFragment, LoadingFragment.TAG,supportFragmentManager) //Open loading fragment while data is fetched from database.
+        openFragment(
+            loadingFragment,
+            LoadingFragment.TAG,
+            supportFragmentManager
+        ) //Open loading fragment while data is fetched from database.
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
         viewModel.getDataAboutProblems().ignoreFirst().observe(this, {
-                quizangaApplication.hasProblemOccurred = it
-                setScreen()
-                loadScreen()
-            })
-
-        viewModel.getActiveGameState().observe(this, { gameState ->
-            if (gameState != null){
-                setApplicationGameObjectAsGameState(gameState)
-                state = gameState
-            }
-            else {
+            quizangaApplication.hasProblemOccurred = it
+            if (it) {
                 setScreen()
                 loadScreen()
             }
         })
-    }
 
 
-    private fun setApplicationGamePlayersFromGameState(playerList: MutableList<Player>) {
-        with(quizangaApplication.game) {
-            players = playerList
-            playersAmount = playerList.size
-        }
-    }
-
-    private fun setApplicationGameObjectAsGameState(gameState: GameState) {
-        with(quizangaApplication.game) {
-            gameId = gameState.gameId
-            hasStarted = true
-            difficultLevel = gameState.difficultyLevel
-            numberOfTurnsLeft = gameState.numberOfTurnsLeft
-            currentTurnCounter = gameState.roundCounter
-        }
-        viewModel.getQuestions().observe(this,{ allQuestions ->
-            if(allQuestions == null){
-                viewModel.addQuestions(quizangaApplication.game.difficultLevel)
-            }
-        })
-        viewModel.getPlayersFromThisGameState(gameState.gameId).observe(  this , { playerList ->
-            setApplicationGamePlayersFromGameState(playerList as MutableList<Player>)
-        })
     }
 
 
@@ -187,11 +157,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun restartGame(){
-        Log.i(TAG, quizangaApplication.game.hasStarted.toString())
         viewModel.deleteGameState(state)
         viewModel.deletePlayers(quizangaApplication.game.players)
         quizangaApplication.restartGame()
-        Log.i(TAG, quizangaApplication.game.hasStarted.toString())
         loadScreen()
     }
 
