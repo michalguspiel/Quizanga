@@ -8,7 +8,7 @@ import com.erdees.quizanga.models.Player
 interface PlayerDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun savePlayerIntoGame(player: Player)
+    suspend fun savePlayerIntoGame(player: Player): Long
 
     @Query("SELECT * FROM PLAYER WHERE gameId = :gameId")
     fun getPlayersFromGame(gameId: Long): LiveData<List<Player>>

@@ -21,10 +21,14 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils.addMargin
 import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
+import com.erdees.quizanga.Utils.openFragmentWithoutTryingToPopItFromBackStack
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.models.Question
+import com.erdees.quizanga.screens.GameQuestionScreen
+import com.erdees.quizanga.screens.GameScoreboardScreen
+import com.erdees.quizanga.screens.ResultScreen
 import com.erdees.quizanga.viewModels.GameQuestionFragmentViewModel
 import kotlin.random.Random
 
@@ -42,8 +46,11 @@ class GameQuestionFragment : Fragment() {
     private var ID_OF_BUTTON_WITH_INCORRECT_ANSWER_3: Int = 0
     private lateinit var listOfIncorrectButtonIds: List<Int>
     private lateinit var alphabet: MutableList<String>
-    private val red = 0xFFFF0000
 
+    private val red = 0xFFFF0000
+    private var green = 0
+
+    @SuppressLint("SetTextI18n")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,10 +62,15 @@ class GameQuestionFragment : Fragment() {
         val categoryTV = view.findViewById<TextView>(R.id.game_question_category)
         answersLayout = view.findViewById(R.id.game_question_answers_layout)
 
+        Log.i(TAG,application.toString())
+        Log.i(TAG,application.game.toString())
+
+        green = ContextCompat.getColor(requireContext(),R.color.green_500)
         setButtonIdsAndIncorrectButtonIdList()
         alphabet = mutableListOf("A", "B", "C", "D")
 
         viewModel = ViewModelProvider(this).get(GameQuestionFragmentViewModel::class.java)
+
         viewModel.getQuestions().observe(viewLifecycleOwner, { allQuestions ->
             if (appWillSoonRunOutOfQuestions(
                     allQuestions.results.size,
@@ -76,12 +88,11 @@ class GameQuestionFragment : Fragment() {
             else setAnswers()
             Log.i(TAG, thisQuestion.correct_answer)
         })
+        playerWithTurn = application.game.players[application.game.currentTurnCounter]
+        Log.i(TAG,application.game.players.toList().toString())
+        Log.i(TAG,playerWithTurn.name)
+        playerNameTextView.text = "Question for " + playerWithTurn.name
 
-        viewModel.getPlayersForThisGame(application.game.gameId).observe(viewLifecycleOwner,
-             {
-                playerWithTurn = it[application.game.currentTurnCounter]
-                playerNameTextView.text = "Question for " + playerWithTurn.name
-            })
 
         return view
     }
@@ -193,7 +204,7 @@ class GameQuestionFragment : Fragment() {
         setColorAnimation(colorAnimation)
         setAnimation(blinkingAnim)
         val correctButton = view?.findViewById<Button>(ID_OF_BUTTON_WITH_CORRECT_ANSWER)
-        correctButton!!.setBackgroundColor(ContextCompat.getColor(requireContext(),R.color.green_500))
+        correctButton!!.setBackgroundColor(green)
         colorAnimation.start()
         correctButton.startAnimation(blinkingAnim)
     }
@@ -201,7 +212,7 @@ class GameQuestionFragment : Fragment() {
 
     private fun lightCorrectAnswer(button: Button) {
         playSound(true)
-        button.setBackgroundColor(resources.getColor(R.color.green_500))
+        button.setBackgroundColor(green)
         val anim: Animation = AlphaAnimation(1.0f, 0.2f)
         setAnimation(anim)
         anim.setAnimationListener(object : Animation.AnimationListener {
@@ -233,20 +244,26 @@ class GameQuestionFragment : Fragment() {
         viewModel.updateGameState(updatedGameState)
     }
 
+
     private fun answeredCorrectly(player: Player) {
+        Log.i(TAG,player.name + " CORRRRRECT")
         application.game.correctAnswer(player)
+        Log.i(TAG, player.points.toString() + "POINTS CHECK")
         viewModel.updatePoints(player)
         application.incrementQuestionCounter()
         updateGameState()
-        Log.i(TAG, "Answered correctly!")
+        application.setScreen()
+        openCorrectFragment()
     }
 
     private fun answeredWrongly(player: Player) {
+        Log.i(TAG,player.name + " WRROOOOONG")
         application.game.wrongAnswer(player)
         viewModel.updatePoints(player)
         application.incrementQuestionCounter()
         updateGameState()
-        Log.i(TAG, "Answered wrongly!")
+        application.setScreen()
+        openCorrectFragment()
     }
 
     private fun setColorAnimation(animation : ObjectAnimator){
@@ -284,6 +301,30 @@ class GameQuestionFragment : Fragment() {
         this.forEach {
             it.isClickable = false
         }
+    }
+
+    private fun openCorrectFragment(){
+        when(application.screen){
+            is GameQuestionScreen  -> {
+                val fragment = newInstance()
+                fragment.application = this.application
+                openFragmentWithoutTryingToPopItFromBackStack(fragment,TAG,parentFragmentManager)
+            }
+            is GameScoreboardScreen ->  {
+                val fragment = GameScoreboardFragment.newInstance()
+                fragment.application = application
+                openFragmentWithoutTryingToPopItFromBackStack(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
+            }
+            is ResultScreen ->   {
+                val fragment = ResultFragment.newInstance()
+                fragment.application = application
+                openFragmentWithoutTryingToPopItFromBackStack(fragment,ResultFragment.TAG,parentFragmentManager)
+            }
+            else -> {
+        Log.i(TAG,application.screen.toString())
+                throw Exception("ERrrrrrr...!")
+            }
+            }
     }
 
     private fun randomizePositionOfCorrectAnswer(): Int {

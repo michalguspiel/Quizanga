@@ -14,14 +14,17 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.gameLogic.Game
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
+import com.erdees.quizanga.Utils
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Easy
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Hard
 import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.gameLogic.levelOfDifficult.Medium
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
+import com.erdees.quizanga.screens.GameQuestionScreen
 import com.erdees.quizanga.viewModels.SetGameFragmentAndroidViewModel
 import com.erdees.quizanga.viewModels.SetGameFragmentViewModel
+
 
 class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
 
@@ -38,10 +41,12 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
     lateinit var startGameButton: Button
     private val playerList = mutableListOf<Player>()
 
+    private var gameTurns = 0
+
     private lateinit var levelsList : List<LevelOfDifficult>
     private lateinit var levelsSpinner : AutoCompleteTextView
-    override fun onResume() {
 
+    override fun onResume() {
         val levelsAdapter = ArrayAdapter(requireActivity(), R.layout.support_simple_spinner_dropdown_item, levelsList.map{it.name})
         with(levelsSpinner) {
             setSelection(0)
@@ -85,8 +90,8 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
 
         /**Listening to LiveData*/
         viewModel.getAmountOfGameTurns().observe(viewLifecycleOwner,  { amount ->
-            application.game.setAmountOfGameTurns(amount)
-            roundCountTextView.text = application.game.numberOfTurns.toString()
+            gameTurns = amount
+            roundCountTextView.text = gameTurns.toString()
         })
         viewModel.getAmountOfPlayers().observe(viewLifecycleOwner,{amount ->
             application.game.setAmountOfPlayers(amount)
@@ -101,11 +106,12 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         return view
     }
 
-    private fun createNewGameStateInDatabase(game: Game){
+    private fun createNewGameStateInDatabase(game: Game) :Long {
         game.gameId = 0
         val newGameState = GameState(game.gameId,game.numberOfTurns,game.difficultLevel,game.currentTurnCounter)
         val gameId = androidViewModel.startGame(newGameState)
         createPlayersInDatabase(playerList, gameId)
+        return gameId
     }
 
     private fun preparePlayerListToSaveBySettingGameID(gameId: Long){
@@ -114,7 +120,10 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
 
     private fun createPlayersInDatabase(playerList: List<Player>,gameId: Long){
         preparePlayerListToSaveBySettingGameID(gameId)
-        androidViewModel.savePlayersIntoGame(playerList)
+        for(eachPlayer in playerList){
+            val id = androidViewModel.savePlayerIntoGame(eachPlayer)
+            eachPlayer.playerId = id
+        }
     }
 
     private fun showToast(
@@ -138,7 +147,34 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
 
     private fun startNewGame(){
         application.game.players = playerList
-        createNewGameStateInDatabase(application.game)
+        application.game.playersAmount = playerList.size
+        application.game.setAmountOfGameTurns(gameTurns)
+        Log.i(TAG, application.game.numberOfTurns.toString() + "lala  ")
+        val newGameId = createNewGameStateInDatabase(application.game)
+        setNewGame(newGameId)
+        viewModel.getQuestions().observe(viewLifecycleOwner,{
+            if(it == null) viewModel.addMoreQuestions(application.game.difficultLevel)
+            if(it != null ){
+                application.screen = GameQuestionScreen()
+                if(application.screen is GameQuestionScreen) openGameQuestionFragment()
+                else throw Exception("Error wrong screen!!!")
+            }
+        })
+    }
+
+    private fun setNewGame(gameStateId: Long){
+        Log.i(TAG,"Set game casted!")
+        with(application.game) {
+            gameId = gameStateId
+            hasStarted = true
+
+        }
+    }
+
+    private fun openGameQuestionFragment(){
+        val gameQuestionFragment = GameQuestionFragment.newInstance()
+        gameQuestionFragment.application = application
+        Utils.openFragmentWithoutAddingToBackStack(gameQuestionFragment,GameQuestionFragment.TAG,parentFragmentManager)
     }
 
     private fun prePopulateListWithPreviousNames(list: List<Player>,index: Int){
@@ -227,6 +263,7 @@ class SetGameFragment : Fragment(), AdapterView.OnItemClickListener {
         viewModel.setLevelOfDifficulty(levelsList.first())
         viewModel.setAmountOfPlayers(2)
         viewModel.setAmountOfGameTurns(3)
+        playerList.clear()
     }
 
     companion object {
