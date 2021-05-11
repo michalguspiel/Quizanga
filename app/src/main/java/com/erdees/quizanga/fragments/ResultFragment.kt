@@ -9,10 +9,10 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.erdees.quizanga.R
-import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
+import com.erdees.quizanga.Utils.openFragmentWithoutAddingToBackStack
 import com.erdees.quizanga.Utils.playSound
 import com.erdees.quizanga.Utils.sortByPoints
-import com.erdees.quizanga.Utils.testOpenFragment
+import com.erdees.quizanga.Utils.openFragmentWithoutTryingToPopItFromBackStack
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.Player
 
@@ -57,7 +57,7 @@ class ResultFragment : Fragment() {
     private fun openSetGameFragment(){
         val setGameFragment = SetGameFragment.newInstance()
         setGameFragment.application = application
-        testOpenFragment(setGameFragment,SetGameFragment.TAG,parentFragmentManager)
+        openFragmentWithoutAddingToBackStack(setGameFragment,SetGameFragment.TAG,parentFragmentManager)
     }
 
     @SuppressLint("SetTextI18n")

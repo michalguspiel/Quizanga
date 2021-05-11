@@ -8,6 +8,8 @@ import com.erdees.quizanga.models.Player
 class PlayerRepository(private val playerDao: PlayerDao) {
 
 
+    suspend fun savePlayerIntoGame(player: Player): Long = playerDao.savePlayerIntoGame(player)
+
     suspend fun savePlayersIntoGame(playerList: List<Player>) {
         playerList.forEach { playerDao.savePlayerIntoGame(it) }
     }

@@ -11,15 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.Utils.ignoreFirst
 import com.erdees.quizanga.Utils.openFragment
-import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
+import com.erdees.quizanga.Utils.openFragmentWithoutAddingToBackStack
 import com.erdees.quizanga.fragments.*
 import com.erdees.quizanga.models.GameState
-import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.screens.*
 import com.erdees.quizanga.viewModels.MainActivityViewModel
 
-/**TODO CHANGE ARCHITECTURE OF THIS , CALLS FROM VIEWMODELS LIVE DATA ARE CHANGING APPLICATION GAME OBJECT STATE WHICH CAUSES BUGS
- * AT LEAST THAT'S WHAT I THINK FOR NOW */
+
 class MainActivity : AppCompatActivity() {
 
     private val loadingFragment = LoadingFragment.newInstance()
@@ -33,7 +31,7 @@ class MainActivity : AppCompatActivity() {
         if (setGameFragmentIsVisible() == true && supportFragmentManager.backStackEntryCount == 1) {
             val fragment = WelcomeFragment.newInstance()
             fragment.application = quizangaApplication
-            openFragmentWithoutBackStack(fragment, WelcomeFragment.TAG,supportFragmentManager)
+            openFragmentWithoutAddingToBackStack(fragment, WelcomeFragment.TAG,supportFragmentManager)
         }
         else if (gamesHistoryIsVisible() == true || setGameFragmentIsVisible() == true) {
             super.onBackPressed()
@@ -73,6 +71,10 @@ class MainActivity : AppCompatActivity() {
         ) //Open loading fragment while data is fetched from database.
         viewModel = ViewModelProvider(this).get(MainActivityViewModel::class.java)
 
+        viewModel.getActiveGameState().observe(this, { gameState ->
+            if (gameState != null) state = gameState
+        })
+
         viewModel.getDataAboutProblems().ignoreFirst().observe(this, {
             quizangaApplication.hasProblemOccurred = it
             if (it) {
@@ -80,7 +82,6 @@ class MainActivity : AppCompatActivity() {
                 loadScreen()
             }
         })
-
 
     }
 
@@ -92,22 +93,22 @@ class MainActivity : AppCompatActivity() {
                 is WelcomeScreen -> {
                     val fragment = WelcomeFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragmentWithoutBackStack(fragment, WelcomeFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutAddingToBackStack(fragment, WelcomeFragment.TAG,supportFragmentManager)
                 }
                 is SetGameScreen -> {
                     val fragment = SetGameFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragmentWithoutBackStack(fragment, SetGameFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutAddingToBackStack(fragment, SetGameFragment.TAG,supportFragmentManager)
                 }
                 is GameScoreboardScreen -> {
                     val fragment = GameScoreboardFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragmentWithoutBackStack(fragment, GameScoreboardFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutAddingToBackStack(fragment, GameScoreboardFragment.TAG,supportFragmentManager)
                 }
                 is GameQuestionScreen -> {
                     val fragment = GameQuestionFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragmentWithoutBackStack(fragment, GameQuestionFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutAddingToBackStack(fragment, GameQuestionFragment.TAG,supportFragmentManager)
                 }
                 is LoadingScreen -> {
                     val fragment = LoadingFragment.newInstance()
@@ -117,7 +118,7 @@ class MainActivity : AppCompatActivity() {
                 is ResultScreen -> {
                     val fragment = ResultFragment.newInstance()
                     fragment.application = quizangaApplication
-                    openFragmentWithoutBackStack(fragment, ResultFragment.TAG,supportFragmentManager)
+                    openFragmentWithoutAddingToBackStack(fragment, ResultFragment.TAG,supportFragmentManager)
                 }
         }
     }

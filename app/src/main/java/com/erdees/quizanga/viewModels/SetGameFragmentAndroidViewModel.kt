@@ -29,6 +29,10 @@ class SetGameFragmentAndroidViewModel(application: Application) : AndroidViewMod
 
     }
 
+    fun savePlayerIntoGame(player: Player):Long = runBlocking {
+        playerRepository.savePlayerIntoGame(player)
+    }
+
     fun savePlayersIntoGame(playerList: List<Player>){
         viewModelScope.launch(Dispatchers.IO) {
             playerRepository.savePlayersIntoGame(playerList)

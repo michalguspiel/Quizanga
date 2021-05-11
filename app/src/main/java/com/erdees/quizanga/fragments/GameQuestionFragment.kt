@@ -3,7 +3,6 @@ package com.erdees.quizanga.fragments
 import android.animation.ArgbEvaluator
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.text.Html
@@ -22,8 +21,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils.addMargin
 import com.erdees.quizanga.Utils.appWillSoonRunOutOfQuestions
-import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
-import com.erdees.quizanga.Utils.testOpenFragment
+import com.erdees.quizanga.Utils.openFragmentWithoutTryingToPopItFromBackStack
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.models.GameState
 import com.erdees.quizanga.models.Player
@@ -72,6 +70,7 @@ class GameQuestionFragment : Fragment() {
         alphabet = mutableListOf("A", "B", "C", "D")
 
         viewModel = ViewModelProvider(this).get(GameQuestionFragmentViewModel::class.java)
+
         viewModel.getQuestions().observe(viewLifecycleOwner, { allQuestions ->
             if (appWillSoonRunOutOfQuestions(
                     allQuestions.results.size,
@@ -308,18 +307,18 @@ class GameQuestionFragment : Fragment() {
         when(application.screen){
             is GameQuestionScreen  -> {
                 val fragment = newInstance()
-                fragment.application = application
-                testOpenFragment(fragment,TAG,parentFragmentManager)
+                fragment.application = this.application
+                openFragmentWithoutTryingToPopItFromBackStack(fragment,TAG,parentFragmentManager)
             }
             is GameScoreboardScreen ->  {
                 val fragment = GameScoreboardFragment.newInstance()
                 fragment.application = application
-                testOpenFragment(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
+                openFragmentWithoutTryingToPopItFromBackStack(fragment,GameScoreboardFragment.TAG,parentFragmentManager)
             }
             is ResultScreen ->   {
                 val fragment = ResultFragment.newInstance()
                 fragment.application = application
-                testOpenFragment(fragment,ResultFragment.TAG,parentFragmentManager)
+                openFragmentWithoutTryingToPopItFromBackStack(fragment,ResultFragment.TAG,parentFragmentManager)
             }
             else -> {
         Log.i(TAG,application.screen.toString())

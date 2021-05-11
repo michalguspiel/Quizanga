@@ -8,9 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.erdees.quizanga.MainActivity
 import com.erdees.quizanga.R
 import com.erdees.quizanga.Utils
 import com.erdees.quizanga.gameLogic.QuizangaApplication
@@ -69,6 +67,7 @@ class LoadingFragment : Fragment() {
         return view
     }
 
+
     private fun setApplicationGameObjectAsGameState(gameState: GameState) {
         with(application.game) {
             gameId = gameState.gameId
@@ -89,6 +88,7 @@ class LoadingFragment : Fragment() {
     }
 
     private fun setApplicationGamePlayersFromGameState(playerList: MutableList<Player>) {
+        Log.i(TAG," set players to game object casted!")
         with(application.game) {
             players = playerList
             playersAmount = playerList.size
@@ -97,12 +97,12 @@ class LoadingFragment : Fragment() {
 
 
     private fun loadScreen() {
-        Log.i(MainActivity.TAG, "Load screen casted!")
+        Log.i(TAG, "Load screen casted!")
         when (application.screen) {
             is WelcomeScreen -> {
                 val fragment = WelcomeFragment.newInstance()
                 fragment.application = application
-                Utils.openFragmentWithoutBackStack(
+                Utils.openFragmentWithoutAddingToBackStack(
                     fragment,
                     WelcomeFragment.TAG,
                     parentFragmentManager
@@ -111,7 +111,7 @@ class LoadingFragment : Fragment() {
             is GameScoreboardScreen -> {
                 val fragment = GameScoreboardFragment.newInstance()
                 fragment.application = application
-                Utils.openFragmentWithoutBackStack(
+                Utils.openFragmentWithoutAddingToBackStack(
                     fragment,
                     GameScoreboardFragment.TAG,
                     parentFragmentManager
@@ -120,7 +120,7 @@ class LoadingFragment : Fragment() {
             is GameQuestionScreen -> {
                 val fragment = GameQuestionFragment.newInstance()
                 fragment.application = application
-                Utils.openFragmentWithoutBackStack(
+                Utils.openFragmentWithoutAddingToBackStack(
                     fragment,
                     GameQuestionFragment.TAG,
                     parentFragmentManager
@@ -129,7 +129,7 @@ class LoadingFragment : Fragment() {
             is ResultScreen -> {
                 val fragment = ResultFragment.newInstance()
                 fragment.application = application
-                Utils.openFragmentWithoutBackStack(
+                Utils.openFragmentWithoutAddingToBackStack(
                     fragment,
                     ResultFragment.TAG,
                     parentFragmentManager

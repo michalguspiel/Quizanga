@@ -8,6 +8,7 @@ import com.erdees.quizanga.gameLogic.levelOfDifficult.LevelOfDifficult
 import com.erdees.quizanga.repository.BasicRepository
 import com.erdees.quizanga.repository.GameStateRepository
 import com.erdees.quizanga.repository.PlayerRepository
+import kotlinx.coroutines.runBlocking
 
 class LoadingFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -29,7 +30,9 @@ class LoadingFragmentViewModel(application: Application) : AndroidViewModel(appl
 
     fun getActiveGameState() = stateRepository.getActiveGame()
 
-    fun getPlayersFromThisGameState(gameId: Long) = playersRepository.getPlayersFromGame(gameId)
+    fun getPlayersFromThisGameState(gameId: Long) = runBlocking {
+        playersRepository.getPlayersFromGame(gameId)
+    }
 
     fun getQuestions() = basicRepository.getQuestions()
 

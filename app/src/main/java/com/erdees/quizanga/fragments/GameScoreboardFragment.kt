@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.erdees.quizanga.gameLogic.QuizangaApplication
 import com.erdees.quizanga.R
-import com.erdees.quizanga.Utils.openFragmentWithoutBackStack
+import com.erdees.quizanga.Utils.openFragmentWithoutAddingToBackStack
 import com.erdees.quizanga.models.Player
 import com.erdees.quizanga.viewModels.GameScoreboardFragmentViewModel
 
@@ -54,10 +54,10 @@ class GameScoreboardFragment : Fragment() {
     }
 
     private fun startRound() {
-        application.proceedWithQuestion()
+        application.setScreen()
         val fragment = GameQuestionFragment.newInstance()
         fragment.application = application
-        openFragmentWithoutBackStack(fragment, GameQuestionFragment.TAG, this.parentFragmentManager)
+        openFragmentWithoutAddingToBackStack(fragment, GameQuestionFragment.TAG, this.parentFragmentManager)
 
     }
 

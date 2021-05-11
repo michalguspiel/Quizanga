@@ -13,6 +13,7 @@ import com.erdees.quizanga.repository.GameStateRepository
 import com.erdees.quizanga.repository.PlayerRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class GameQuestionFragmentViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -29,6 +30,10 @@ class GameQuestionFragmentViewModel(application: Application) : AndroidViewModel
         playerRepository = PlayerRepository(playerDao)
     }
 
+    fun updatePlayerPoints(player: Player) = runBlocking {
+        playerRepository.updatePoints(player)
+    }
+
     fun updatePoints(player: Player) {
         viewModelScope.launch(Dispatchers.IO) {
             playerRepository.updatePoints(player)
@@ -41,6 +46,7 @@ class GameQuestionFragmentViewModel(application: Application) : AndroidViewModel
         }
     }
 
+    fun getPlayersForThisGame(gameId: Long) = playerRepository.getPlayersFromGame(gameId)
 
     fun getQuestions() = basicRepository.getQuestions()
 

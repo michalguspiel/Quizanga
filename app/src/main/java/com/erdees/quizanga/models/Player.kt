@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Player(
-    @PrimaryKey(autoGenerate = true)   val playerId: Long,
+    @PrimaryKey(autoGenerate = true) var playerId: Long,
     var gameId: Long = 0L,
     val name: String,
     var points: Int

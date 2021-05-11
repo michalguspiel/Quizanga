@@ -37,6 +37,7 @@ class Game{
     fun setAmountOfGameTurns(number: Int) {
         if(hasStarted) return
         numberOfTurns = number
+        numberOfTurnsLeft = numberOfTurns
     }
 
     private fun highestScoredPlayer(): Player {

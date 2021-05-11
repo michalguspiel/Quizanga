@@ -7,11 +7,6 @@ import com.erdees.quizanga.screens.*
 
 class QuizangaApplication {
 
-    private object NoActionScreenCallback : (Screen) -> Unit {
-        override fun invoke(screen: Screen) {}
-    }
-
-    private var screenCallback: (Screen) -> Unit = NoActionScreenCallback
     lateinit var game: Game
     lateinit var screen: Screen
 
@@ -35,14 +30,6 @@ class QuizangaApplication {
         setScreen()
     }
 
-    fun proceedWithQuestion() {
-        if (game.numberOfTurnsLeft == 0) {
-            game.hasEnded = true
-            screen = ResultScreen()
-        } else screen = GameQuestionScreen()
-
-        this.screenCallback(screen)
-    }
 
     fun restartGame() {
         game = Game()
@@ -71,16 +58,6 @@ class QuizangaApplication {
     }
 
 
-    fun withScreenCallback(callback: (Screen) -> Unit) {
-        this.screenCallback = callback
-        updateScreen(screen)
-    }
-
-    private fun updateScreen(screen: Screen) {
-        this.screen = screen
-        screenCallback(this.screen)
-
-    }
 
 }
 

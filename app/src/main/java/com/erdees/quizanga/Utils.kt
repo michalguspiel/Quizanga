@@ -17,7 +17,7 @@ import com.erdees.quizanga.models.Player
 object Utils {
 
 
-    fun testOpenFragment(fragment: Fragment, fragmentTag: String, fragmentManager: FragmentManager){
+    fun openFragmentWithoutTryingToPopItFromBackStack(fragment: Fragment, fragmentTag: String, fragmentManager: FragmentManager){
         val manager: FragmentManager = fragmentManager
         val ft: FragmentTransaction = manager.beginTransaction()
         ft.replace(R.id.activity_main_frame, fragment, fragmentTag)
@@ -25,7 +25,7 @@ object Utils {
         ft.commit()
     }
 
-    fun openFragmentWithoutBackStack(fragment: Fragment, fragmentTag: String, fragmentManager: FragmentManager) {
+    fun openFragmentWithoutAddingToBackStack(fragment: Fragment, fragmentTag: String, fragmentManager: FragmentManager) {
         val backStateName = fragment.javaClass.name
         val manager: FragmentManager = fragmentManager
         val fragmentPopped = manager.popBackStackImmediate(backStateName, 0)
