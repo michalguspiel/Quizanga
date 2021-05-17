@@ -25,6 +25,8 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
+/**All of this passes if the game is not started.
+ * Because then the screen is question/scoreboard initially */
 
 @RunWith(AndroidJUnit4::class)
 class SetUpGameInstrumentedTest {
@@ -105,15 +107,16 @@ fun closeEverything(){
         val numberPickerInput = withParent(withId(numberPickerID))
         val alertDialogSubmitButton = withId(alertDialogSubmitButtonID)
 
-        onView(startGameButton).perform(click())
+         onView(startGameButton).perform(click())
             onView(numberOfPlayersTV).perform(click())
             onView(withText("Pick number of players")).check(matches(isDisplayed()))
             onView(numberPicker).check(matches(isDisplayed()))
             onView(numberPickerInput).check(matches(withText("2")))
             onView(numberPicker).perform(clickBottomCentre)
-            onView(numberPickerInput).check(matches(withText("3")))
+            onView(numberPicker).perform(clickBottomCentre)
+            onView(numberPickerInput).check(matches(withText("4")))
             onView(alertDialogSubmitButton).perform(click())
-            onView(withText("3")).check(matches(isDisplayed()))
+            onView(withText("4")).check(matches(isDisplayed()))
     }
 
     @Test
